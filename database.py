@@ -9,11 +9,11 @@ def connect_to_mongodb(database):
     return database
 
 
-def get_collection(database):
-    collection = database["test"]
+def get_collection(database, name):
+    collection = database[name]
     return collection
 
 
 def create_challenge_collection(challenge_uuid, db_challenges, sounds):
     new_challenge_collection = db_challenges[challenge_uuid]
-    insert_into_col = new_challenge_collection.insert_one(sounds)
+    insert_into_col = new_challenge_collection.insert_many(sounds)

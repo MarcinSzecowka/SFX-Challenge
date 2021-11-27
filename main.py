@@ -2,9 +2,16 @@ import pymongo
 from flask import Flask, request, jsonify, url_for, redirect
 from database import connect_to_mongodb, get_collection
 from utils import create_new_challenge
+from sounds import populate_sounds_collection
 
 db_sfxchallenge = connect_to_mongodb("SFXChallenge")
-my_sfxchallenge_collection = get_collection(db_sfxchallenge)
+
+my_sfxchallenge_collection = get_collection(db_sfxchallenge, "test")
+
+sounds_collection = get_collection(db_sfxchallenge, "Sounds")
+sounds_collection.drop()
+sounds_collection = get_collection(db_sfxchallenge, "Sounds")
+populate_sounds_collection(sounds_collection)
 
 app = Flask(__name__)
 
@@ -20,9 +27,9 @@ def create_new_modern_challenge():
     if request.method == "GET":
         return "<p>Hello, World!</p>"
     if request.method == "POST":
-        amount = request.form.get("amount")
-        min_year = request.form.get("year")
-        new_uuid = create_new_challenge(amount, min_year)
+        amount = int(request.form.get("amount"))
+        min_year = int(request.form.get("min_year"))
+        new_uuid = create_new_challenge(sounds_collection, amount, min_year)
         return redirect(url_for('challenge', uuid=new_uuid), code=302)
 
 
