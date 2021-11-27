@@ -3,8 +3,8 @@ from flask import Flask, request, jsonify, url_for, redirect
 from database import connect_to_mongodb, get_collection
 from utils import create_new_challenge
 
-db = connect_to_mongodb()
-my_collection = get_collection(db)
+db_sfxchallenge = connect_to_mongodb("SFXChallenge")
+my_sfxchallenge_collection = get_collection(db_sfxchallenge)
 
 app = Flask(__name__)
 
@@ -28,8 +28,8 @@ def create_new_modern_challenge():
 
 @app.route("/<uuid>")
 def challenge(uuid):
-    uuid1 = uuid
-    return f"<p>challenge page 123 uuid:{uuid1}</p>"
+    challenge_uuid = uuid
+    return f"<p>your new challenge uuid is: {challenge_uuid}</p>"
 
 
 if __name__ == '__main__':
