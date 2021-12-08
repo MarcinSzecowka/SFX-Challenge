@@ -28,3 +28,14 @@ def compare_answer_to_game_name_by_id(challenge_uuid, db, sfx_id, guess):
         return game_name
     else:
         return "False"
+
+
+def get_challenge_content(challenge_uuid, db):
+    # todo use flask.send_file() to send a file in the future
+    challenge_collection = get_collection(db, challenge_uuid)
+    challenge_content = [{"challenge_uuid": challenge_uuid}]
+    sfxs_contents = []
+    for sfx in challenge_collection.find({}, {"id": 1, "associated_file": 1}):
+        sfxs_contents.append(sfx)
+    challenge_content.append({"sfxs_contents": sfxs_contents})
+    return challenge_content

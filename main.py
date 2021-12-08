@@ -1,6 +1,6 @@
-from flask import Flask, request, url_for, redirect
+from flask import Flask, request, url_for, redirect, jsonify
 from database import connect_to_mongodb, get_collection
-from utils import create_new_challenge, compare_answer_to_game_name_by_id
+from utils import create_new_challenge, compare_answer_to_game_name_by_id, get_challenge_content
 from sounds import populate_sounds_collection
 
 db_sfxchallenge = connect_to_mongodb("SFXChallenge")
@@ -36,19 +36,17 @@ def create_new_modern_challenge():
 @app.route("/<uuid>", methods=["GET", "POST"])
 def challenge(uuid):
     if request.method == "GET":
-        # todo here the function should return the challenges' sfxs' ids, and associated file, but NOT the game name
         challenge_uuid = uuid
-        return f"<p>your new challenge uuid is: {challenge_uuid}</p>"
+        challenge_content = get_challenge_content(challenge_uuid, db_challenges)
+        return jsonify(challenge_content)
     if request.method == "POST":
         challenge_uuid = uuid
         sfx_id = str(request.form.get("sfx_id"))
         guess = str(request.form.get("guess"))
         return compare_answer_to_game_name_by_id(challenge_uuid, db_challenges, sfx_id, guess)
 
-# todo create an endpoint that will check the input from a user against the sfx's game name -- DONE
 # todo compare the answer and game name by using Levenschtein's metric to give the user a slight edge when it comes
 #  to guessing the name
-# todo make it return True/False along with the game's name when the answer is True
 ##############################
 # todo create an endpoint that will give the user answers to all questions that they have not guessed correctly, along
 #  with some kind of a variable that will be used in the frontend to differentiate those answers from answers that the
