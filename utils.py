@@ -25,8 +25,10 @@ def compare_answer_to_game_name_by_id(challenge_uuid, db, sfx_id, guess):
     game_name = challenge_collection.find({"_id": {"$eq": sfx_id}})[0]["game_name"]
     # todo change below code so that it uses levenshtein
     if game_name == guess:
+        challenge_collection.update_one({"_id": sfx_id}, {"$set": {"status": 1}}, upsert=False)
         return game_name
     else:
+        challenge_collection.update_one({"_id": sfx_id}, {"$set": {"status": 2}}, upsert=False)
         return "False"
 
 
@@ -39,3 +41,14 @@ def get_challenge_content(challenge_uuid, db):
         sfxs_contents.append(sfx)
     challenge_content.append({"sfxs_contents": sfxs_contents})
     return challenge_content
+
+
+def get_challenge_results_content(challenge_uuid, db):
+    # todo use flask.send_file() to send a file in the future
+    challenge_collection = get_collection(db, challenge_uuid)
+    challenge_results_content = [{"challenge_uuid": challenge_uuid}]
+    sfxs_contents = []
+    for sfx in challenge_collection.find({}, {"id": 1, "game_name": 1, "associated_file": 1, "status": 1}):
+        sfxs_contents.append(sfx)
+    challenge_results_content.append(sfxs_contents)
+    return challenge_results_content
