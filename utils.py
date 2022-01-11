@@ -1,5 +1,9 @@
 from uuid import uuid4
 from database import connect_to_mongodb, create_challenge_collection, get_collection
+from Levenshtein import ratio
+
+
+MINIMUM_RATIO = 0.8
 
 
 def select_random_sounds(db, amount, min_year):
@@ -23,8 +27,7 @@ def create_new_challenge(db, amount, min_year):
 def compare_answer_to_game_name_by_id(challenge_uuid, db, sfx_id, guess):
     challenge_collection = get_collection(db, challenge_uuid)
     game_name = challenge_collection.find({"_id": {"$eq": sfx_id}})[0]["game_name"]
-    # todo change below code so that it uses levenshtein
-    if game_name == guess:
+    if ratio(game_name.lower(), guess.lower()) >= MINIMUM_RATIO:
         challenge_collection.update_one({"_id": sfx_id}, {"$set": {"status": 1}}, upsert=False)
         return game_name
     else:

@@ -55,9 +55,11 @@ def challenge_results(uuid):
         return jsonify(challenge_results_content)
 
 
-# todo compare the answer and game name by using Levenschtein's metric to give the user a slight edge when it comes
-#  to guessing the name
+# todo add a timestamp to all newly created challenges and remove them automatically after a few days
 ##############################
+# todo add multiplayer option by utilizing websockets
+##############################
+# todo implement asynchronous requests so that the user can see challenge answers without being redirected to a new site
 
 
 if __name__ == '__main__':
