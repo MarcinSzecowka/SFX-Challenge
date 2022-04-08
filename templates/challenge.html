@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block styles %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+{% endblock %}
+{% block content %}
+    <p>challenge page</p>
+    <p>click here to copy the link: {{ json_obj[0].challenge_uuid }}</p>
+    <hr>
+    <input type="range" id="volumeControl" name="volume" value="10" min="1" max="100" onchange="changeVolume()">
+    <hr>
+    <form>
+        <div class="container">
+            <div class="row">
+                {% for element in json_obj[1].sfxs_contents %}
+                    <div class="col-4">
+                        {{ loop.index }}: <input type="text" name="sfx_input" id="{{ element._id }}" onfocus="changeFocus()" oninput="requestPrep()" style="{{ 'background-color:red;' if element.status == 'incorrect_guess' else 'background-color:green; pointer-events:none;' if element.status == 'correct_guess'}}" >
+                        <audio id="audio-{{ element._id }}" src="/audio/{{ element._id }}"></audio>
+                        <button type="button" onclick="playAudio('audio-{{ element._id }}')">Play audio</button>
+                    </div><br>
+                {% endfor %}
+            </div>
+            <button>See results</button>
+        </div>
+    </form>
+    <div id="results"></div>
+
+    <script>
+        let timer = null
+        var currentFocus = null;
+
+        function changeFocus(){
+            clearTimeout(timer);
+            currentFocus = document.activeElement.id;
+        }
+
+        function requestPrep(){
+            clearTimeout(timer);
+            timer = setTimeout(sendRequest, 400);
+        }
+
+        function sendRequest(){
+            sfxId = currentFocus;
+            userGuess = document.getElementById(currentFocus).value;
+            if (userGuess != ""){
+                $.post( "/challenge/{{ json_obj[0].challenge_uuid }}", {
+                    sfx_id: sfxId,
+                    guess: userGuess,
+                    dataType: "json"
+                })
+                .done(function(response){
+                    if (response.game_name === "False"){
+                        document.getElementById(response.sfx_id).style.backgroundColor = "red";
+                    }
+                    else {
+                        document.getElementById(response.sfx_id).style.backgroundColor = "green";
+                        document.getElementById(response.sfx_id).disabled = true;
+                    }
+                });
+            }
+        }
+
+        function playAudio(id){
+            document.getElementById(id).play();
+        }
+
+        function changeVolume(){
+            var allAudioTags = document.getElementsByTagName("audio");
+            var globalVolume = document.getElementById("volumeControl").value/100;
+
+            for (var i = 0, max = allAudioTags.length; i < max; i++){
+                allAudioTags[i].volume = globalVolume;
+            }
+        }
+
+        // Change default volume of audio tags after the page loads so that the user doesn't get
+        // hearing damage if they don't adjust their volume first
+        changeVolume()
+
+    </script>
+{% endblock %}
+
+<!--
+https://stackoverflow.com/questions/17365289/how-to-send-audio-wav-file-generated-at-the-server-to-client-browser
+https://stackoverflow.com/questions/17359741/playing-a-wavefile-from-the-html-using-flask-framework/67388580#67388580
+-->

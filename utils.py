@@ -1,9 +1,15 @@
 from uuid import uuid4
 from database import connect_to_mongodb, create_challenge_collection, get_collection
 from Levenshtein import ratio
+from flask import jsonify
 
 
 MINIMUM_RATIO = 0.8
+
+
+def collection_exists(uuid, db):
+    list_of_collections = db.list_collection_names()
+    return uuid in list_of_collections
 
 
 def select_random_sounds(db, amount, min_year):
@@ -28,30 +34,29 @@ def compare_answer_to_game_name_by_id(challenge_uuid, db, sfx_id, guess):
     challenge_collection = get_collection(db, challenge_uuid)
     game_name = challenge_collection.find({"_id": {"$eq": sfx_id}})[0]["game_name"]
     if ratio(game_name.lower(), guess.lower()) >= MINIMUM_RATIO:
-        challenge_collection.update_one({"_id": sfx_id}, {"$set": {"status": 1}}, upsert=False)
-        return game_name
+        challenge_collection.update_one({"_id": sfx_id}, {"$set": {"status": "correct_guess"}}, upsert=False)
+        return jsonify({"sfx_id": sfx_id, "game_name": game_name, "status": "correct_guess"})
     else:
-        challenge_collection.update_one({"_id": sfx_id}, {"$set": {"status": 2}}, upsert=False)
-        return "False"
+        challenge_collection.update_one({"_id": sfx_id}, {"$set": {"status": "incorrect_guess"}}, upsert=False)
+        return jsonify({"sfx_id": sfx_id, "game_name": "False", "status": "incorrect_guess"})
 
 
 def get_challenge_content(challenge_uuid, db):
-    # todo use flask.send_file() to send a file in the future
     challenge_collection = get_collection(db, challenge_uuid)
     challenge_content = [{"challenge_uuid": challenge_uuid}]
     sfxs_contents = []
-    for sfx in challenge_collection.find({}, {"id": 1, "associated_file": 1}):
+    for sfx in challenge_collection.find({}, {"id": 1, "status": 1}):
         sfxs_contents.append(sfx)
     challenge_content.append({"sfxs_contents": sfxs_contents})
+    print(challenge_content)
     return challenge_content
 
 
 def get_challenge_results_content(challenge_uuid, db):
-    # todo use flask.send_file() to send a file in the future
     challenge_collection = get_collection(db, challenge_uuid)
     challenge_results_content = [{"challenge_uuid": challenge_uuid}]
     sfxs_contents = []
-    for sfx in challenge_collection.find({}, {"id": 1, "game_name": 1, "associated_file": 1, "status": 1}):
+    for sfx in challenge_collection.find({}, {"id": 1, "game_name": 1, "status": 1}):
         sfxs_contents.append(sfx)
     challenge_results_content.append(sfxs_contents)
     return challenge_results_content
