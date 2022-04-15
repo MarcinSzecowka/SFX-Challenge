@@ -46,7 +46,7 @@ def challenge(uuid):
         else:
             return render_template("challenge_non_existent.html")
     if request.method == "POST":
-        challenge_uuid = uuid
+        challenge_uuid = str(uuid)
         sfx_id = str(request.form.get("sfx_id"))
         guess = str(request.form.get("guess"))
         return compare_answer_to_game_name_by_id(challenge_uuid, db_challenges, sfx_id, guess)
@@ -57,9 +57,8 @@ def challenge_results(uuid):
     if request.method == "POST":
         challenge_uuid = str(uuid)
         challenge_results_content = get_challenge_results_content(challenge_uuid, db_challenges)
+        print(challenge_results_content)
         return jsonify(challenge_results_content)
-        # todo implement another endpoint in challenge.html that will send a request to this endpoint and receive
-        #   challenge results as a response, then update the page accordingly
 
 
 @app.route("/audio/<audio_file_name>")
@@ -82,6 +81,9 @@ def handle_error_404(e):
 ##############################
 # todo add multiplayer option by utilizing websockets
 ##############################
+# todo make the input fields have the correct game name in them when reloading a challenge page
+##############################
+# todo add an indicator in each challenges' database entry that will indicate whether or not a challenge has ended
 
 
 if __name__ == '__main__':

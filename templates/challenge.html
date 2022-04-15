@@ -14,13 +14,13 @@
             <div class="row">
                 {% for element in json_obj[1].sfxs_contents %}
                     <div class="col-4">
-                        {{ loop.index }}: <input type="text" name="sfx_input" id="{{ element._id }}" onfocus="changeFocus()" oninput="requestPrep()" style="{{ 'background-color:red;' if element.status == 'incorrect_guess' else 'background-color:green; pointer-events:none;' if element.status == 'correct_guess'}}" >
+                        {{ loop.index }}: <input type="text" name="sfx_input" id="{{ element._id }}" onfocus="changeFocus()" oninput="getQuestionAnswerPrep()" style="{{ 'background-color:red;' if element.status == 'incorrect_guess' else 'background-color:green; pointer-events:none;' if element.status == 'correct_guess'}}" >
                         <audio id="audio-{{ element._id }}" src="/audio/{{ element._id }}"></audio>
                         <button type="button" onclick="playAudio('audio-{{ element._id }}')">Play audio</button>
                     </div><br>
                 {% endfor %}
             </div>
-            <button>See results</button>
+            <button type="button" onclick="getResults()">See results</button>
         </div>
     </form>
     <div id="results"></div>
@@ -34,12 +34,12 @@
             currentFocus = document.activeElement.id;
         }
 
-        function requestPrep(){
+        function getQuestionAnswerPrep(){
             clearTimeout(timer);
-            timer = setTimeout(sendRequest, 400);
+            timer = setTimeout(getQuestionAnswer, 400);
         }
 
-        function sendRequest(){
+        function getQuestionAnswer(){
             sfxId = currentFocus;
             userGuess = document.getElementById(currentFocus).value;
             if (userGuess != ""){
@@ -58,6 +58,26 @@
                     }
                 });
             }
+        }
+
+        function getResults(){
+            $.post( "/challenge/{{ json_obj[0].challenge_uuid }}/results", {
+                dataType: "json"
+            })
+            .done(function(response){
+                // document.getElementById("results").innerHTML = response[1][0]._id;
+                for (var j = 0; j < response[1].length; j++){
+                    document.getElementById("results").innerHTML = "game over";
+                    document.getElementById(response[1][j]._id).value = response[1][j].game_name;
+                    if (response[1][j].status === "correct_guess"){
+                        document.getElementById(response[1][j]._id).style.backgroundColor = "green";
+                    }
+                    else {
+                        document.getElementById(response[1][j]._id).style.backgroundColor = "red";
+                    }
+                    document.getElementById(response[1][j]._id).disabled = true;
+                }
+            });
         }
 
         function playAudio(id){
