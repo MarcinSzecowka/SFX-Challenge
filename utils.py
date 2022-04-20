@@ -45,7 +45,7 @@ def get_challenge_content(challenge_uuid, db):
     challenge_collection = get_collection(db, challenge_uuid)
     challenge_content = [{"challenge_uuid": challenge_uuid}]
     sfxs_contents = []
-    for sfx in challenge_collection.find({}, {"id": 1, "status": 1}):
+    for sfx in challenge_collection.aggregate([{"$project": {"status": 1, "game_name": {"$cond": {"if": {"$eq": ["$status", "correct_guess"]}, "then": "$game_name", "else": ""}}}}]):  # ,"else": "$$REMOVE" could also be used, but leaving it in and making it empty makes it easier to handle by the frontend (I would have to make an if statement in jinja which is arguably more complicated to implement)
         sfxs_contents.append(sfx)
     challenge_content.append({"sfxs_contents": sfxs_contents})
     print(challenge_content)

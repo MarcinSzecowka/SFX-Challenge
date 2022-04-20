@@ -14,7 +14,7 @@
             <div class="row">
                 {% for element in json_obj[1].sfxs_contents %}
                     <div class="col-4">
-                        {{ loop.index }}: <input type="text" name="sfx_input" id="{{ element._id }}" onfocus="changeFocus()" oninput="getQuestionAnswerPrep()" style="{{ 'background-color:red;' if element.status == 'incorrect_guess' else 'background-color:green; pointer-events:none;' if element.status == 'correct_guess'}}" >
+                        {{ loop.index }}: <input type="text" name="sfx_input" id="{{ element._id }}" onfocus="changeFocus()" oninput="getQuestionAnswerPrep()" style="{{ 'background-color:red;' if element.status == 'incorrect_guess' else 'background-color:green; pointer-events:none;' if element.status == 'correct_guess'}}" value="{{ element.game_name }}">
                         <audio id="audio-{{ element._id }}" src="/audio/{{ element._id }}"></audio>
                         <button type="button" onclick="playAudio('audio-{{ element._id }}')">Play audio</button>
                     </div><br>

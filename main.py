@@ -57,7 +57,6 @@ def challenge_results(uuid):
     if request.method == "POST":
         challenge_uuid = str(uuid)
         challenge_results_content = get_challenge_results_content(challenge_uuid, db_challenges)
-        print(challenge_results_content)
         return jsonify(challenge_results_content)
 
 
@@ -81,9 +80,8 @@ def handle_error_404(e):
 ##############################
 # todo add multiplayer option by utilizing websockets
 ##############################
-# todo make the input fields have the correct game name in them when reloading a challenge page
-##############################
 # todo add an indicator in each challenges' database entry that will indicate whether or not a challenge has ended
+#   and change the timestamp so that the challenge gets deleted from the database
 
 
 if __name__ == '__main__':
