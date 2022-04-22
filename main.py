@@ -30,7 +30,7 @@ def create_new_modern_challenge():
     if request.method == "GET":
         return render_template("create_new_challenge.html")
     if request.method == "POST":
-        amount = int(request.form.get("amount"))
+        amount = int(request.form.get("question_amount"))
         min_year = int(request.form.get("min_year"))
         new_uuid = create_new_challenge(sounds_collection, amount, min_year)
         return redirect(url_for('challenge', uuid=new_uuid), code=302)
