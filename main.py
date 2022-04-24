@@ -1,7 +1,7 @@
 from flask import Flask, request, url_for, redirect, jsonify, render_template, send_file
 from database import connect_to_mongodb, get_collection
 from utils import create_new_challenge, compare_answer_to_game_name_by_id, get_challenge_content, \
-    get_challenge_results_content, collection_exists
+    get_challenge_results_content, collection_exists, add_deletion_date, delete_outdated_challenges
 from sounds import populate_sounds_collection
 from pathlib import Path
 import os
@@ -22,7 +22,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def return_homepage():
-    return redirect(url_for("create_new_modern_challenge"), code=301)
+    return redirect(url_for("create_new_modern_challenge"), code=302)
 
 
 @app.route("/modern", methods=["GET", "POST"])
@@ -33,6 +33,7 @@ def create_new_modern_challenge():
         amount = int(request.form.get("question_amount"))
         min_year = int(request.form.get("min_year"))
         new_uuid = create_new_challenge(sounds_collection, amount, min_year)
+        add_deletion_date(new_uuid, db_sfxchallenge)
         return redirect(url_for('challenge', uuid=new_uuid), code=302)
 
 
@@ -70,9 +71,18 @@ def return_audio_file(audio_file_name):
         as_attachment=False,)
 
 
+@app.route("/deletion/<uuid>", methods=["DELETE"])
+def delete_challenges(uuid):
+    if uuid == os.getenv("DELETION_KEY"):
+        return delete_outdated_challenges(db_challenges, db_sfxchallenge)
+    else:
+        return '', 204
+
+
 @app.errorhandler(404)
 def handle_error_404(e):
-    return redirect(url_for("create_new_modern_challenge"), code=301)
+    print("this")
+    return redirect(url_for("create_new_modern_challenge"), code=302)
 
 
 # todo add a timestamp to all newly created challenges and remove them automatically after a few days
@@ -82,6 +92,8 @@ def handle_error_404(e):
 ##############################
 # todo add an indicator in each challenges' database entry that will indicate whether or not a challenge has ended
 #   and change the timestamp so that the challenge gets deleted from the database
+#       Instead o doing the above create a new collection that keeps challenges ids and a deletion date.
+#       Then add a function that will go over that collection and check for outdated challenges to delete.
 
 
 if __name__ == '__main__':

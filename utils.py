@@ -2,6 +2,7 @@ from uuid import uuid4
 from database import connect_to_mongodb, create_challenge_collection, get_collection
 from Levenshtein import ratio
 from flask import jsonify
+from datetime import datetime, timedelta
 
 
 MINIMUM_RATIO = 0.8
@@ -28,6 +29,12 @@ def create_new_challenge(db, amount, min_year):
     db_challenges = connect_to_mongodb("Challenges")
     create_challenge_collection(challenge_uuid, db_challenges, sounds)
     return challenge_uuid
+
+
+def add_deletion_date(uuid, db):
+    deletion_dates_collection = get_collection(db, "Deletion dates")
+    deletion_date = datetime.now() + timedelta(days=2)
+    insertion_id = deletion_dates_collection.insert_one({"uuid": uuid, "deletion_date": deletion_date})
 
 
 def compare_answer_to_game_name_by_id(challenge_uuid, db, sfx_id, guess):
@@ -59,3 +66,12 @@ def get_challenge_results_content(challenge_uuid, db):
         sfxs_contents.append(sfx)
     challenge_results_content.append(sfxs_contents)
     return challenge_results_content
+
+
+def delete_outdated_challenges(db_challenges, db_sfxchallenge):
+    deletion_dates_collection = get_collection(db_sfxchallenge, "Deletion dates")
+    for date in deletion_dates_collection.find({}, {"deletion_date": 1, "_id": 0, "uuid": 1}):
+        if datetime.now() > date["deletion_date"]:
+            db_challenges.drop_collection(date["uuid"])
+            deletion_dates_collection.delete_one({"uuid": date["uuid"]})
+    return '', 200
