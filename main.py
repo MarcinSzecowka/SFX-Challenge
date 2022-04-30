@@ -1,7 +1,8 @@
 from flask import Flask, request, url_for, redirect, jsonify, render_template, send_file
 from database import connect_to_mongodb, get_collection
 from utils import create_new_challenge, compare_answer_to_game_name_by_id, get_challenge_content, \
-    get_challenge_results_content, collection_exists, add_deletion_date, delete_outdated_challenges
+    get_challenge_results_content, collection_exists, add_deletion_date, delete_outdated_challenges, \
+    extend_deletion_date
 from sounds import populate_sounds_collection
 from pathlib import Path
 import os
@@ -34,34 +35,32 @@ def create_new_modern_challenge():
         min_year = int(request.form.get("min_year"))
         new_uuid = create_new_challenge(sounds_collection, amount, min_year)
         add_deletion_date(new_uuid, db_sfxchallenge)
-        return redirect(url_for('challenge', uuid=new_uuid), code=302)
+        return redirect(url_for('challenge', challenge_uuid=new_uuid), code=302)
 
 
-@app.route("/challenge/<uuid>", methods=["GET", "POST"])
-def challenge(uuid):
+@app.route("/challenge/<string:challenge_uuid>", methods=["GET", "POST"])
+def challenge(challenge_uuid):
     if request.method == "GET":
-        challenge_uuid = str(uuid)
         if collection_exists(challenge_uuid, db_challenges):
             challenge_content = get_challenge_content(challenge_uuid, db_challenges)
+            extend_deletion_date(db_sfxchallenge, challenge_uuid)
             return render_template("challenge.html", json_obj=challenge_content)
         else:
             return render_template("challenge_non_existent.html")
     if request.method == "POST":
-        challenge_uuid = str(uuid)
         sfx_id = str(request.form.get("sfx_id"))
         guess = str(request.form.get("guess"))
         return compare_answer_to_game_name_by_id(challenge_uuid, db_challenges, sfx_id, guess)
 
 
-@app.route("/challenge/<uuid>/results", methods=["POST"])
-def challenge_results(uuid):
+@app.route("/challenge/<string:challenge_uuid>/result", methods=["POST"])
+def challenge_results(challenge_uuid):
     if request.method == "POST":
-        challenge_uuid = str(uuid)
         challenge_results_content = get_challenge_results_content(challenge_uuid, db_challenges)
         return jsonify(challenge_results_content)
 
 
-@app.route("/audio/<audio_file_name>")
+@app.route("/audio/<string:audio_file_name>")
 def return_audio_file(audio_file_name):
     base_path = Path(__file__).parent
     audio_file_path = os.path.join(base_path, "audio", audio_file_name + ".mp3")
@@ -71,29 +70,24 @@ def return_audio_file(audio_file_name):
         as_attachment=False,)
 
 
-@app.route("/deletion/<uuid>", methods=["DELETE"])
-def delete_challenges(uuid):
-    if uuid == os.getenv("DELETION_KEY"):
+@app.route("/deletion/<string:challenge_uuid>", methods=["DELETE"])
+def delete_challenges(challenge_uuid):
+    if challenge_uuid == os.getenv("DELETION_KEY"):
         return delete_outdated_challenges(db_challenges, db_sfxchallenge)
     else:
         return '', 204
 
 
 @app.errorhandler(404)
-def handle_error_404(e):
-    print("this")
-    return redirect(url_for("create_new_modern_challenge"), code=302)
+def page_not_found(e):
+    print(f"Error handler: {e}")
+    return redirect(url_for("return_homepage"), code=302)
 
 
-# todo add a timestamp to all newly created challenges and remove them automatically after a few days
 # todo refresh challenge deletion date when you revisit a challenge
 ##############################
 # todo add multiplayer option by utilizing websockets
 ##############################
-# todo add an indicator in each challenges' database entry that will indicate whether or not a challenge has ended
-#   and change the timestamp so that the challenge gets deleted from the database
-#       Instead o doing the above create a new collection that keeps challenges ids and a deletion date.
-#       Then add a function that will go over that collection and check for outdated challenges to delete.
 
 
 if __name__ == '__main__':

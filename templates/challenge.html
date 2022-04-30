@@ -61,7 +61,7 @@
         }
 
         function getResults(){
-            $.post( "/challenge/{{ json_obj[0].challenge_uuid }}/results", {
+            $.post( "/challenge/{{ json_obj[0].challenge_uuid }}/result", {
                 dataType: "json"
             })
             .done(function(response){

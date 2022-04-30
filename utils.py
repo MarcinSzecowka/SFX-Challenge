@@ -37,6 +37,12 @@ def add_deletion_date(uuid, db):
     insertion_id = deletion_dates_collection.insert_one({"uuid": uuid, "deletion_date": deletion_date})
 
 
+def extend_deletion_date(db, uuid):
+    deletion_dates_collection = get_collection(db, "Deletion dates")
+    new_deletion_date = datetime.now() + timedelta(days=2)
+    update_id = deletion_dates_collection.update_one({"uuid": uuid}, {"$set": {"deletion_date": new_deletion_date}})
+
+
 def compare_answer_to_game_name_by_id(challenge_uuid, db, sfx_id, guess):
     challenge_collection = get_collection(db, challenge_uuid)
     game_name = challenge_collection.find({"_id": {"$eq": sfx_id}})[0]["game_name"]
