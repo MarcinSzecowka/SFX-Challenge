@@ -1,4 +1,4 @@
-from flask import Flask, request, url_for, redirect, jsonify, render_template, send_file
+from flask import Flask, request, url_for, redirect, jsonify, render_template, send_file, send_from_directory
 from database import connect_to_mongodb, get_collection
 from utils import create_new_challenge, compare_answer_to_game_name_by_id, get_challenge_content, \
     get_challenge_results_content, collection_exists, add_deletion_date, delete_outdated_challenges, \
@@ -26,7 +26,7 @@ def return_homepage():
     return redirect(url_for("create_new_modern_challenge"), code=302)
 
 
-@app.route("/modern", methods=["GET", "POST"])
+@app.route("/create/modern", methods=["GET", "POST"])
 def create_new_modern_challenge():
     if request.method == "GET":
         return render_template("create_new_challenge.html")
@@ -78,15 +78,22 @@ def delete_challenges(challenge_uuid):
         return '', 204
 
 
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
+
 @app.errorhandler(404)
 def page_not_found(e):
     print(f"Error handler: {e}")
-    return redirect(url_for("return_homepage"), code=302)
+    print(f"{request.script_root}/{request.path}")  # todo Remove this line before deploying
+    return redirect(url_for("create_new_modern_challenge"), code=302)
 
 
-# todo refresh challenge deletion date when you revisit a challenge
 ##############################
 # todo add multiplayer option by utilizing websockets
+##############################
+# todo add score counter on challenge page
 ##############################
 
 
