@@ -7,7 +7,6 @@ from sounds import populate_sounds_collection
 from pathlib import Path
 import os
 
-
 db_sfxchallenge = connect_to_mongodb("SFXChallenge")
 db_challenges = connect_to_mongodb("Challenges")
 
@@ -70,9 +69,9 @@ def return_audio_file(audio_file_name):
         as_attachment=False,)
 
 
-@app.route("/deletion/<string:challenge_uuid>", methods=["DELETE"])
-def delete_challenges(challenge_uuid):
-    if challenge_uuid == os.getenv("DELETION_KEY"):
+@app.route("/deletion/<string:deletion_uuid>", methods=["DELETE"])
+def delete_challenges(deletion_uuid):
+    if deletion_uuid == os.getenv("DELETION_KEY"):
         return delete_outdated_challenges(db_challenges, db_sfxchallenge)
     else:
         return '', 204
@@ -85,16 +84,19 @@ def favicon():
 
 @app.errorhandler(404)
 def page_not_found(e):
-    print(f"Error handler: {e}")
+    print(f"Error handler: {e}")  # todo Remove this line before deploying
     print(f"{request.script_root}/{request.path}")  # todo Remove this line before deploying
     return redirect(url_for("create_new_modern_challenge"), code=302)
 
 
 ##############################
-# todo add multiplayer option by utilizing websockets
+# todo Add virtual fingerprint
 ##############################
-# todo add score counter on challenge page
+# todo Add multiplayer option by utilizing websockets
 ##############################
+# todo Redo the front page
+##############################
+# todo Start populating the database
 
 
 if __name__ == '__main__':
