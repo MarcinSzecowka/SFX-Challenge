@@ -1,7 +1,31 @@
 {% extends "base.html" %}
 {% block styles %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 {% endblock %}
+
+{% block scripts %}
+    <script>
+      var asd
+      // Virtual fingerprint
+      // Initialize the agent at application startup.
+      const fpPromise = import('https://fpcdn.io/v3/YEa0uAF9MDNGqdIS2zVk')
+        .then(FingerprintJS => FingerprintJS.load({
+          region: 'eu'
+        }))
+
+      // Get the visitor identifier when you need it.
+      fpPromise
+        .then(fp => fp.get())
+        .then(result => {
+          // This is the visitor identifier:
+          var visitorId = result.visitorId;
+          document.getElementById("user_fingerprint").value = visitorId;
+        })
+    </script>
+{% endblock %}
+
 {% block content %}
     <div class="container">
         <div class="row justify-content-center  text-right">
@@ -11,9 +35,30 @@
                     <input type="text" name="question_amount" id="question_amount"><br>
                     <label for="min_year">Minimum year: </label>
                     <input type="text" name="min_year" id="min_year"><br>
+                    <input type="hidden" name="user_fingerprint" id="user_fingerprint" value="">
                     <button type="submit">Create</button>
                 </form>
             </div>
         </div>
     </div>
+    {% if request.args.get("error_message") is defined and request.args.get("error_message") != None %}
+    <div class="container">
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>{{ request.args.get("error_message") }}</strong>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+    {% endif %}
+    {% if error_message != None %}
+    <div class="container">
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>{{ error_message }}</strong>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+    {% endif %}
 {% endblock %}

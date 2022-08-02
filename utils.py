@@ -37,10 +37,26 @@ def add_deletion_date(uuid, db):
     insertion_id = deletion_dates_collection.insert_one({"uuid": uuid, "deletion_date": deletion_date})
 
 
+def add_challenge_owner(uuid, fingerprint, db):
+    challenge_owner_collection = get_collection(db, "Challenge owner")
+    insertion_id = challenge_owner_collection.insert_one({"uuid": uuid, "owner": fingerprint})
+
+
 def extend_deletion_date(db, uuid):
     deletion_dates_collection = get_collection(db, "Deletion dates")
     new_deletion_date = datetime.now() + timedelta(days=2)
     update_id = deletion_dates_collection.update_one({"uuid": uuid}, {"$set": {"deletion_date": new_deletion_date}})
+
+
+def compare_fingerprint(user_fingerprint, uuid, db):
+    challenge_owner_collection = get_collection(db, "Challenge owner")
+    challenge_owner = challenge_owner_collection.find({"uuid": {"$eq": uuid}})[0]["owner"]
+    if not challenge_owner:  # find method returns [] if nothing is found. This shouldn't ever happen but the if statement is there just in case
+        return False
+    elif challenge_owner == user_fingerprint:
+        return True
+    else:
+        return False
 
 
 def compare_answer_to_game_name_by_id(challenge_uuid, db, sfx_id, guess):
@@ -76,8 +92,10 @@ def get_challenge_results_content(challenge_uuid, db):
 
 def delete_outdated_challenges(db_challenges, db_sfxchallenge):
     deletion_dates_collection = get_collection(db_sfxchallenge, "Deletion dates")
+    challenge_owner__collection = get_collection(db_sfxchallenge, "Challenge owner")
     for date in deletion_dates_collection.find({}, {"deletion_date": 1, "_id": 0, "uuid": 1}):
         if datetime.now() > date["deletion_date"]:
             db_challenges.drop_collection(date["uuid"])
             deletion_dates_collection.delete_one({"uuid": date["uuid"]})
+            challenge_owner__collection.delete_one({"uuid": date["uuid"]})
     return '', 200

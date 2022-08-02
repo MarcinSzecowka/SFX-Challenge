@@ -2,8 +2,9 @@ from flask import Flask, request, url_for, redirect, jsonify, render_template, s
 from database import connect_to_mongodb, get_collection
 from utils import create_new_challenge, compare_answer_to_game_name_by_id, get_challenge_content, \
     get_challenge_results_content, collection_exists, add_deletion_date, delete_outdated_challenges, \
-    extend_deletion_date
+    extend_deletion_date, add_challenge_owner, compare_fingerprint
 from sounds import populate_sounds_collection
+from error_messages import challenge_does_not_exist
 from pathlib import Path
 import os
 
@@ -26,14 +27,18 @@ def return_homepage():
 
 
 @app.route("/create/modern", methods=["GET", "POST"])
-def create_new_modern_challenge():
+def create_new_modern_challenge(error_message=None):
     if request.method == "GET":
+        if not error_message:
+            return render_template("create_new_challenge.html", error_message=error_message)
         return render_template("create_new_challenge.html")
     if request.method == "POST":
         amount = int(request.form.get("question_amount"))
         min_year = int(request.form.get("min_year"))
+        user_fingerprint = str(request.form.get("user_fingerprint"))
         new_uuid = create_new_challenge(sounds_collection, amount, min_year)
         add_deletion_date(new_uuid, db_sfxchallenge)
+        add_challenge_owner(new_uuid, user_fingerprint, db_sfxchallenge)
         return redirect(url_for('challenge', challenge_uuid=new_uuid), code=302)
 
 
@@ -45,11 +50,15 @@ def challenge(challenge_uuid):
             extend_deletion_date(db_sfxchallenge, challenge_uuid)
             return render_template("challenge.html", json_obj=challenge_content)
         else:
-            return render_template("challenge_non_existent.html")
+            return render_template("create_new_challenge.html", error_message=challenge_does_not_exist)
     if request.method == "POST":
         sfx_id = str(request.form.get("sfx_id"))
         guess = str(request.form.get("guess"))
-        return compare_answer_to_game_name_by_id(challenge_uuid, db_challenges, sfx_id, guess)
+        user_fingerprint = str(request.form.get("user_fingerprint"))
+        if compare_fingerprint(user_fingerprint, challenge_uuid, db_sfxchallenge):
+            return compare_answer_to_game_name_by_id(challenge_uuid, db_challenges, sfx_id, guess)
+        else:
+            return "redirect"
 
 
 @app.route("/challenge/<string:challenge_uuid>/result", methods=["POST"])
@@ -74,7 +83,7 @@ def delete_challenges(deletion_uuid):
     if deletion_uuid == os.getenv("DELETION_KEY"):
         return delete_outdated_challenges(db_challenges, db_sfxchallenge)
     else:
-        return '', 204
+        return '', 401
 
 
 @app.route('/favicon.ico')
@@ -90,14 +99,13 @@ def page_not_found(e):
 
 
 ##############################
-# todo Add virtual fingerprint
+# todo Add logging
+# todo Create better error handling
 ##############################
 # todo Add multiplayer option by utilizing websockets
-##############################
-# todo Redo the front page
 ##############################
 # todo Start populating the database
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True)  # todo Remove debug before deploying

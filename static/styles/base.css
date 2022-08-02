@@ -67,3 +67,8 @@
 .uncompleted {
     background-color: red;
 }
+
+.alert {
+    padding-top: 50px;
+    text-align: center;
+}
