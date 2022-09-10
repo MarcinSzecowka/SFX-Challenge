@@ -80,7 +80,7 @@
                 })
                 .done(function(response){
                     if (response === "redirect"){
-                        window.location.replace("/create/modern?error_message=You+are+not+allowed+to+take+part+in+this+challenge+as+you+are+not+it%27s+owner.+You+may+see+this+message+even+if+you+are+the+owner%2C+which+means+that+your+browser%27s+settings+have+changed.+In+that+case+consider+creating+a+new+challenge+instead")
+                        window.location.replace("/create/modern?error_message=You+are+not+allowed+to+take+part+in+this+challenge+as+you+are+not+it%27s+owner.+You+may+see+this+message+even+if+you+are+the+owner%2C+which+means+that+your+browser%27s+settings+have+changed.+In+that+case+consider+creating+a+new+challenge+instead");
                     }
                     else if (response.game_name === "False"){
                         document.getElementById(response.sfx_id).classList.add('uncompleted');

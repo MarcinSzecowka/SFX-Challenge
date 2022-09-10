@@ -34,17 +34,20 @@ def create_new_challenge(db, amount, min_year):
 def add_deletion_date(uuid, db):
     deletion_dates_collection = get_collection(db, "Deletion dates")
     deletion_date = datetime.now() + timedelta(days=2)
+    # noinspection PyUnusedLocal
     insertion_id = deletion_dates_collection.insert_one({"uuid": uuid, "deletion_date": deletion_date})
 
 
 def add_challenge_owner(uuid, fingerprint, db):
     challenge_owner_collection = get_collection(db, "Challenge owner")
+    # noinspection PyUnusedLocal
     insertion_id = challenge_owner_collection.insert_one({"uuid": uuid, "owner": fingerprint})
 
 
 def extend_deletion_date(db, uuid):
     deletion_dates_collection = get_collection(db, "Deletion dates")
     new_deletion_date = datetime.now() + timedelta(days=2)
+    # noinspection PyUnusedLocal
     update_id = deletion_dates_collection.update_one({"uuid": uuid}, {"$set": {"deletion_date": new_deletion_date}})
 
 

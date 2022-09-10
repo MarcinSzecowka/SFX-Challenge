@@ -16,4 +16,5 @@ def get_collection(database, name):
 
 def create_challenge_collection(challenge_uuid, db_challenges, sounds):
     new_challenge_collection = db_challenges[challenge_uuid]
-    insert_into_col = new_challenge_collection.insert_many(sounds)
+    # noinspection PyUnusedLocal
+    insert_into_col_id = new_challenge_collection.insert_many(sounds)

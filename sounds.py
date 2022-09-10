@@ -29,4 +29,5 @@ def populate_sounds_collection(collection):
             "status": "no_guess"
         }
     ]
-    results = collection.insert_many(sounds_list)
+    # noinspection PyUnusedLocal
+    insertion_id = collection.insert_many(sounds_list)

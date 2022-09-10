@@ -7,7 +7,10 @@ from sounds import populate_sounds_collection
 from error_messages import challenge_does_not_exist
 from pathlib import Path
 import os
+import logging
+import datetime
 
+# Databases
 db_sfxchallenge = connect_to_mongodb("SFXChallenge")
 db_challenges = connect_to_mongodb("Challenges")
 
@@ -18,6 +21,16 @@ sounds_collection.drop()
 sounds_collection = get_collection(db_sfxchallenge, "Sounds")
 populate_sounds_collection(sounds_collection)
 
+# Logging
+logging.basicConfig(level=logging.DEBUG,
+                    format="%(asctime)s %(name)-12s %(levelname)-8s %(message)s",
+                    datefmt="%m-%d %H:%M",
+                    filename=os.path.join(os.path.abspath(os.curdir), f"logs\Debug{datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S')}.log"),
+                    filemode="w")
+console = logging.StreamHandler()
+logging.getLogger('').addHandler(console)  # todo Remove line before deploying
+
+# App
 app = Flask(__name__)
 
 
@@ -99,12 +112,12 @@ def page_not_found(e):
 
 
 ##############################
-# todo Add logging
 # todo Create better error handling
 ##############################
 # todo Add multiplayer option by utilizing websockets
 ##############################
 # todo Start populating the database
+##############################
 
 
 if __name__ == '__main__':
