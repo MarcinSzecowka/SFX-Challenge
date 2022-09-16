@@ -2,7 +2,7 @@ from flask import Flask, request, url_for, redirect, jsonify, render_template, s
 from database import connect_to_mongodb, get_collection
 from utils import create_new_challenge, compare_answer_to_game_name_by_id, get_challenge_content, \
     get_challenge_results_content, collection_exists, add_deletion_date, delete_outdated_challenges, \
-    extend_deletion_date, add_challenge_owner, compare_fingerprint
+    extend_deletion_date, add_challenge_owner, compare_fingerprint, CreateChallengeForm
 from sounds import populate_sounds_collection
 from error_messages import challenge_does_not_exist
 from pathlib import Path
@@ -41,14 +41,15 @@ def return_homepage():
 
 @app.route("/create/modern", methods=["GET", "POST"])
 def create_new_modern_challenge(error_message=None):
+    form = CreateChallengeForm(request.form)
     if request.method == "GET":
         if not error_message:
-            return render_template("create_new_challenge.html", error_message=error_message)
-        return render_template("create_new_challenge.html")
-    if request.method == "POST":
-        amount = int(request.form.get("question_amount"))
-        min_year = int(request.form.get("min_year"))
-        user_fingerprint = str(request.form.get("user_fingerprint"))
+            return render_template("create_new_challenge.html", form=form, error_message=error_message)
+        return render_template("create_new_challenge.html", form=form)
+    if request.method == "POST" and form.validate():
+        amount = form.question_amount.data
+        min_year = form.minimum_year.data
+        user_fingerprint = form.user_fingerprint.data
         new_uuid = create_new_challenge(sounds_collection, amount, min_year)
         add_deletion_date(new_uuid, db_sfxchallenge)
         add_challenge_owner(new_uuid, user_fingerprint, db_sfxchallenge)

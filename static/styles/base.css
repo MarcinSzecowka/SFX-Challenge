@@ -72,3 +72,16 @@
     padding-top: 50px;
     text-align: center;
 }
+
+label[for="user_fingerprint"] {
+    display: none;
+}
+
+.form_field {
+    width: 50%;
+}
+
+#submit_button {
+    display: block;
+    margin: auto;
+}

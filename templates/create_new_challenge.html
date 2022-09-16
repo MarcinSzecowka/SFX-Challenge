@@ -7,7 +7,6 @@
 
 {% block scripts %}
     <script>
-      var asd
       // Virtual fingerprint
       // Initialize the agent at application startup.
       const fpPromise = import('https://fpcdn.io/v3/YEa0uAF9MDNGqdIS2zVk')
@@ -28,15 +27,15 @@
 
 {% block content %}
     <div class="container">
+        <br>
         <div class="row justify-content-center  text-right">
-            <div  id="form_div" class="col-4">
+            <div  id="form_div" class="col-4 col-sm-5">
+                {% from "_formhelpers.html" import render_field %}
                 <form method="post">
-                    <label for="question_amount">Question amount: </label>
-                    <input type="text" name="question_amount" id="question_amount"><br>
-                    <label for="min_year">Minimum year: </label>
-                    <input type="text" name="min_year" id="min_year"><br>
-                    <input type="hidden" name="user_fingerprint" id="user_fingerprint" value="">
-                    <button type="submit">Create</button>
+                    {{ render_field(form.question_amount, class="form_field", id="question_amount") }}
+                    {{ render_field(form.minimum_year, class="form_field", id="min_year") }}
+                    {{ render_field(form.user_fingerprint, class="form_field", id="user_fingerprint") }}
+                    <button id="submit_button" type="submit">Create</button>
                 </form>
             </div>
         </div>
