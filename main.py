@@ -2,7 +2,7 @@ from flask import Flask, request, url_for, redirect, jsonify, render_template, s
 from database import connect_to_mongodb, get_collection
 from utils import create_new_challenge, compare_answer_to_game_name_by_id, get_challenge_content, \
     get_challenge_results_content, collection_exists, add_deletion_date, delete_outdated_challenges, \
-    extend_deletion_date, add_challenge_owner, compare_fingerprint, CreateChallengeForm
+    extend_deletion_date, add_challenge_owner, compare_fingerprint, CreateChallengeForm, get_audio_file_path
 from sounds import populate_sounds_collection
 from error_messages import challenge_does_not_exist
 from pathlib import Path
@@ -85,7 +85,8 @@ def challenge_results(challenge_uuid):
 @app.route("/audio/<string:audio_file_name>")
 def return_audio_file(audio_file_name):
     base_path = Path(__file__).parent
-    audio_file_path = os.path.join(base_path, "audio", audio_file_name + ".mp3")
+    audio_file_path = get_audio_file_path(audio_file_name, db_sfxchallenge)
+    audio_file_path = os.path.join(base_path, "audio", audio_file_path + ".mp3")
     return send_file(
         audio_file_path,
         mimetype="audio/mp3",

@@ -10,8 +10,8 @@ MINIMUM_RATIO = 0.8
 
 
 class CreateChallengeForm(Form):
-    question_amount = IntegerField("Question amount", [validators.DataRequired(), validators.NumberRange(min=10, max=30)])
-    minimum_year = IntegerField("Minimum year", [validators.DataRequired(), validators.NumberRange(min=2000, max=2022)])
+    question_amount = IntegerField("Question amount", [validators.DataRequired(), validators.NumberRange(min=10, max=20)])
+    minimum_year = IntegerField("Minimum year", [validators.DataRequired(), validators.NumberRange(min=1998, max=2022)])
     user_fingerprint = HiddenField(label=None)
 
 
@@ -67,6 +67,12 @@ def compare_fingerprint(user_fingerprint, uuid, db):
         return True
     else:
         return False
+
+
+def get_audio_file_path(name_uuid, db):
+    sounds_collection = get_collection(db, "Sounds")
+    file_name = sounds_collection.find({"_id": {"$eq": name_uuid}})[0]["associated_file"]
+    return file_name
 
 
 def compare_answer_to_game_name_by_id(challenge_uuid, db, sfx_id, guess):
