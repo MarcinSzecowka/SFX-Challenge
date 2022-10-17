@@ -51,7 +51,6 @@
             <button class="button-centered" type="button" onclick="getResults()">See results</button>
         </div>
     </form>
-    <div id="results"></div>
 
     <script>
         let timer = null
@@ -103,7 +102,6 @@
             })
             .done(function(response){
                 for (var j = 0; j < response[1].length; j++){
-                    document.getElementById("results").innerHTML = "game over";
                     document.getElementById(response[1][j]._id).value = response[1][j].game_name;
                     if (response[1][j].status === "correct_guess"){
                         document.getElementById(response[1][j]._id).classList.remove('uncompleted');

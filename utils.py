@@ -3,14 +3,14 @@ from database import connect_to_mongodb, create_challenge_collection, get_collec
 from Levenshtein import ratio
 from flask import jsonify
 from datetime import datetime, timedelta
-from wtforms import Form, IntegerField, StringField, HiddenField, validators
+from wtforms import Form, IntegerField, HiddenField, validators
 
 
 MINIMUM_RATIO = 0.8
 
 
 class CreateChallengeForm(Form):
-    question_amount = IntegerField("Question amount", [validators.DataRequired(), validators.NumberRange(min=10, max=20)])
+    question_amount = IntegerField("Question amount", [validators.DataRequired(), validators.NumberRange(min=10, max=52)])
     minimum_year = IntegerField("Minimum year", [validators.DataRequired(), validators.NumberRange(min=1998, max=2022)])
     user_fingerprint = HiddenField(label=None)
 

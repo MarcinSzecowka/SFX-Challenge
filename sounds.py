@@ -29,7 +29,7 @@ def populate_sounds_collection(collection):
             "game_name": "Crisis",
             "game_year": 2007,
             "associated_file": "ba0dbd11-2e47-4fed-b899-facdd1364b7d",
-            "status": "",
+            "status": "no_guess",
             "description": "Crisis cloak engaged"
         },
         {
@@ -37,7 +37,7 @@ def populate_sounds_collection(collection):
             "game_name": "Crisis",
             "game_year": 2007,
             "associated_file": "dbb77349-b8dc-49f0-9ef4-833df290ce88",
-            "status": "",
+            "status": "no_guess",
             "description": "Crisis Maximum armour"
         },
         {
@@ -45,7 +45,7 @@ def populate_sounds_collection(collection):
             "game_name": "Crisis",
             "game_year": 2007,
             "associated_file": "53a7ba07-f283-44fe-81cd-08737558182c",
-            "status": "",
+            "status": "no_guess",
             "description": "Crisis Maximum speed"
         },
         {
@@ -53,7 +53,7 @@ def populate_sounds_collection(collection):
             "game_name": "Crisis",
             "game_year": 2007,
             "associated_file": "23a47b79-f628-47ce-8966-ce17b3c3692c",
-            "status": "",
+            "status": "no_guess",
             "description": "Crisis Maximum strength"
         },
         {
@@ -61,7 +61,7 @@ def populate_sounds_collection(collection):
             "game_name": "Counter strike Global offensive",
             "game_year": 2012,
             "associated_file": "8fddc276-7772-4ece-864e-06a07d81fb45",
-            "status": "",
+            "status": "no_guess",
             "description": "CSGO Bomb detonation"
         },
         {
@@ -69,7 +69,7 @@ def populate_sounds_collection(collection):
             "game_name": "Counter strike Global offensive",
             "game_year": 2012,
             "associated_file": "d6b25d5c-e3f9-4248-a53a-9f5a99f6748a",
-            "status": "",
+            "status": "no_guess",
             "description": "CSGO HS"
         },
         {
@@ -77,7 +77,7 @@ def populate_sounds_collection(collection):
             "game_name": "Diablo 2",
             "game_year": 2000,
             "associated_file": "93c46e7b-540f-4061-9fbc-408f908b86cf",
-            "status": "",
+            "status": "no_guess",
             "description": "Diablo 2 level up sound"
         },
         {
@@ -85,7 +85,7 @@ def populate_sounds_collection(collection):
             "game_name": "Diablo 2",
             "game_year": 2000,
             "associated_file": "ef6dbd9d-06c4-4fa4-9199-bd00bf094ea5",
-            "status": "",
+            "status": "no_guess",
             "description": "Diablo 2 Gold drop sound"
         },
         {
@@ -93,7 +93,7 @@ def populate_sounds_collection(collection):
             "game_name": "Diablo 3",
             "game_year": 2012,
             "associated_file": "ad4b6483-818e-4655-97d1-17178d05cdfb",
-            "status": "",
+            "status": "no_guess",
             "description": "Diablo 3 legendary drop"
         },
         {
@@ -101,7 +101,7 @@ def populate_sounds_collection(collection):
             "game_name": "Dishonored",
             "game_year": 2012,
             "associated_file": "7d8d315d-24e3-43ff-8fff-7f23cafac69e",
-            "status": "",
+            "status": "no_guess",
             "description": "Dishonored blink"
         },
         {
@@ -109,7 +109,7 @@ def populate_sounds_collection(collection):
             "game_name": "Dota 2",
             "game_year": 2013,
             "associated_file": "25ab8fa3-1890-4132-8cf4-1cb4c6e08a33",
-            "status": "",
+            "status": "no_guess",
             "description": "Dota 2 Queue pop"
         },
         {
@@ -117,7 +117,7 @@ def populate_sounds_collection(collection):
             "game_name": "Escape from Tarkov",
             "game_year": 2017,
             "associated_file": "16f31b91-5b43-416f-bba2-a1ea15bf6d09",
-            "status": "",
+            "status": "no_guess",
             "description": "EFT container search"
         },
         {
@@ -125,7 +125,7 @@ def populate_sounds_collection(collection):
             "game_name": "Grand Theft Auto 4",
             "game_year": 2008,
             "associated_file": "115db6a9-d762-4abf-9536-a1b4b3a9687e",
-            "status": "",
+            "status": "no_guess",
             "description": "GTA 4 menu sounds"
         },
         {
@@ -133,7 +133,7 @@ def populate_sounds_collection(collection):
             "game_name": "Left 4 Dead 2",
             "game_year": 2009,
             "associated_file": "848f1a67-e86b-42f1-8c14-3e42f8448919",
-            "status": "",
+            "status": "no_guess",
             "description": "L4D2 Jockey"
         },
         {
@@ -141,7 +141,7 @@ def populate_sounds_collection(collection):
             "game_name": "Left 4 Dead 2",
             "game_year": 2009,
             "associated_file": "da0ad8e1-e660-43f2-95bb-5b508eb9f07b",
-            "status": "",
+            "status": "no_guess",
             "description": "L4D2 Witch"
         },
         {
@@ -149,7 +149,7 @@ def populate_sounds_collection(collection):
             "game_name": "League of Legends",
             "game_year": 2009,
             "associated_file": "7f1c339e-fadd-49f0-aa28-abbd3e4e2aae",
-            "status": "",
+            "status": "no_guess",
             "description": "LOL arcane comet"
         },
         {
@@ -157,7 +157,7 @@ def populate_sounds_collection(collection):
             "game_name": "League of Legends",
             "game_year": 2009,
             "associated_file": "ef80c767-c173-4647-a79c-55b59bbc2300",
-            "status": "",
+            "status": "no_guess",
             "description": "LOL electrocute"
         },
         {
@@ -165,15 +165,15 @@ def populate_sounds_collection(collection):
             "game_name": "League of Legends",
             "game_year": 2009,
             "associated_file": "90161ae3-3719-4f81-bc3a-eb8e952b46fe",
-            "status": "",
+            "status": "no_guess",
             "description": "LOL nexus explode"
         },
         {
-            "_id": "5fbfafa1-7675-4798-bcc1-de5e2a603c22",
+            "_id": "295473b7-4242-4f22-9972-e1da670e2c57",
             "game_name": "League of Legends",
             "game_year": 2009,
-            "associated_file": "295473b7-4242-4f22-9972-e1da670e2c57",
-            "status": "",
+            "associated_file": "5fbfafa1-7675-4798-bcc1-de5e2a603c22",
+            "status": "no_guess",
             "description": "LOL queue pop"
         },
         {
@@ -181,7 +181,7 @@ def populate_sounds_collection(collection):
             "game_name": "Minecraft",
             "game_year": 2011,
             "associated_file": "9a3d360e-ee5f-40de-a998-8a0d8e2324a0",
-            "status": "",
+            "status": "no_guess",
             "description": "Minecraft Gravel"
         },
         {
@@ -189,7 +189,7 @@ def populate_sounds_collection(collection):
             "game_name": "Minecraft",
             "game_year": 2011,
             "associated_file": "c22db91a-4226-47d9-9774-5af0acb1acc2",
-            "status": "",
+            "status": "no_guess",
             "description": "Minecraft Level up"
         },
         {
@@ -197,7 +197,7 @@ def populate_sounds_collection(collection):
             "game_name": "Minecraft",
             "game_year": 2011,
             "associated_file": "abd8f390-66d3-467b-93d8-95ca360f4473",
-            "status": "",
+            "status": "no_guess",
             "description": "Minecraft stone"
         },
         {
@@ -205,7 +205,7 @@ def populate_sounds_collection(collection):
             "game_name": "Minecraft",
             "game_year": 2011,
             "associated_file": "63221224-6f8c-4499-a1e1-8fdb33184da8",
-            "status": "",
+            "status": "no_guess",
             "description": "Minecraft wood"
         },
         {
@@ -213,7 +213,7 @@ def populate_sounds_collection(collection):
             "game_name": "MU Online",
             "game_year": 2001,
             "associated_file": "12afbd7b-c36c-4819-b8e7-ec6c6acd68f2",
-            "status": "",
+            "status": "no_guess",
             "description": "Mu devias worm growl"
         },
         {
@@ -221,7 +221,7 @@ def populate_sounds_collection(collection):
             "game_name": "Path of Exile",
             "game_year": 2013,
             "associated_file": "14463c57-cc5a-4c5b-8aff-85763424005a",
-            "status": "",
+            "status": "no_guess",
             "description": "PoE chaos drop sound"
         },
         {
@@ -229,7 +229,7 @@ def populate_sounds_collection(collection):
             "game_name": "Path of Exile",
             "game_year": 2013,
             "associated_file": "cc08f111-601c-4d43-86bd-f133b168024a",
-            "status": "",
+            "status": "no_guess",
             "description": "PoE ex drop sound"
         },
         {
@@ -237,7 +237,7 @@ def populate_sounds_collection(collection):
             "game_name": "Portal",
             "game_year": 2007,
             "associated_file": "e5451b85-43ec-4155-96bb-1ba10236bf5c",
-            "status": "",
+            "status": "no_guess",
             "description": "Portal blue portal"
         },
         {
@@ -245,7 +245,7 @@ def populate_sounds_collection(collection):
             "game_name": "Portal",
             "game_year": 2007,
             "associated_file": "d3a17694-c105-48b9-a933-868abca7d1b6",
-            "status": "",
+            "status": "no_guess",
             "description": "Portal orange portal"
         },
         {
@@ -253,7 +253,7 @@ def populate_sounds_collection(collection):
             "game_name": "PUBG",
             "game_year": 2017,
             "associated_file": "d6101307-db51-4746-8520-44cf8f1ca8c2",
-            "status": "",
+            "status": "no_guess",
             "description": "PUBG airplane sound"
         },
         {
@@ -261,7 +261,7 @@ def populate_sounds_collection(collection):
             "game_name": "Old school RuneScape",
             "game_year": 2007,
             "associated_file": "befffe96-e80d-41cb-9797-96f3b94624d6",
-            "status": "",
+            "status": "no_guess",
             "description": "OSRS casting spells"
         },
         {
@@ -269,7 +269,7 @@ def populate_sounds_collection(collection):
             "game_name": "Old school RuneScape",
             "game_year": 2007,
             "associated_file": "77c7a015-095f-4150-bc7e-72aaec560453",
-            "status": "",
+            "status": "no_guess",
             "description": "OSRS getting hit"
         },
         {
@@ -277,7 +277,7 @@ def populate_sounds_collection(collection):
             "game_name": "Rust",
             "game_year": 2013,
             "associated_file": "183f681b-f1b3-4312-8e2e-f3a0f143f0a0",
-            "status": "",
+            "status": "no_guess",
             "description": "Rust breaking rock"
         },
         {
@@ -285,7 +285,7 @@ def populate_sounds_collection(collection):
             "game_name": "Rust",
             "game_year": 2013,
             "associated_file": "f9a1eae8-c9b2-4388-9351-9ed2f547f7a5",
-            "status": "",
+            "status": "no_guess",
             "description": "Rust hitting tree"
         },
         {
@@ -293,7 +293,7 @@ def populate_sounds_collection(collection):
             "game_name": "The Elder Scrolls V: Skyrim",
             "game_year": 2011,
             "associated_file": "31b459c8-d930-4c80-a451-e3dc5b09da80",
-            "status": "",
+            "status": "no_guess",
             "description": "Skyrim level up"
         },
         {
@@ -301,7 +301,7 @@ def populate_sounds_collection(collection):
             "game_name": "The Elder Scrolls V: Skyrim",
             "game_year": 2011,
             "associated_file": "d3ff395e-df32-4d34-8766-445c028d9c14",
-            "status": "",
+            "status": "no_guess",
             "description": "Skyrim quest complete"
         },
         {
@@ -309,7 +309,7 @@ def populate_sounds_collection(collection):
             "game_name": "The Elder Scrolls V: Skyrim",
             "game_year": 2011,
             "associated_file": "cc5ab06c-cfe5-4633-9af9-90184a2084db",
-            "status": "",
+            "status": "no_guess",
             "description": "Skyrim soul absorb"
         },
         {
@@ -317,7 +317,7 @@ def populate_sounds_collection(collection):
             "game_name": "Sniper Elite v2",
             "game_year": 2012,
             "associated_file": "86811beb-5d3e-4418-b9eb-dbdc948fdd93",
-            "status": "",
+            "status": "no_guess",
             "description": "Sniper elite v2 Breath holding sound"
         },
         {
@@ -325,7 +325,7 @@ def populate_sounds_collection(collection):
             "game_name": "Sniper Elite v2",
             "game_year": 2012,
             "associated_file": "a0934ff4-0271-4588-8955-92c12863c9e3",
-            "status": "",
+            "status": "no_guess",
             "description": "Sniper elite v2 skull crush"
         },
         {
@@ -333,7 +333,7 @@ def populate_sounds_collection(collection):
             "game_name": "Starcraft",
             "game_year": 1998,
             "associated_file": "65f48b1e-1423-4811-ae44-577e269d390e",
-            "status": "",
+            "status": "no_guess",
             "description": "Starcraft protoss building"
         },
         {
@@ -341,7 +341,7 @@ def populate_sounds_collection(collection):
             "game_name": "Terraria",
             "game_year": 2011,
             "associated_file": "50f2cf60-a235-4be3-8594-341db6c572af",
-            "status": "",
+            "status": "no_guess",
             "description": "Terraria boss summon"
         },
         {
@@ -349,7 +349,7 @@ def populate_sounds_collection(collection):
             "game_name": "Terraria",
             "game_year": 2011,
             "associated_file": "4615df93-9764-40a1-ba8e-f7b2d3a85a0a",
-            "status": "",
+            "status": "no_guess",
             "description": "Terraria getting hurt"
         },
         {
@@ -357,7 +357,7 @@ def populate_sounds_collection(collection):
             "game_name": "Terraria",
             "game_year": 2011,
             "associated_file": "24ca5ae6-9e23-46cb-8b25-e33b5d79b2f9",
-            "status": "",
+            "status": "no_guess",
             "description": "Terraria shooting a bow"
         },
         {
@@ -365,7 +365,7 @@ def populate_sounds_collection(collection):
             "game_name": "Terraria",
             "game_year": 2011,
             "associated_file": "3e3d688f-0068-4b41-aa72-8fbbb02e2569",
-            "status": "",
+            "status": "no_guess",
             "description": "Terraria sword swing"
         },
         {
@@ -373,7 +373,7 @@ def populate_sounds_collection(collection):
             "game_name": "World of Tanks",
             "game_year": 2010,
             "associated_file": "f26a2779-f888-4bbb-a13b-fb18a27a9f2c",
-            "status": "",
+            "status": "no_guess",
             "description": "WoT getting hit"
         },
         {
@@ -381,7 +381,7 @@ def populate_sounds_collection(collection):
             "game_name": "World of Tanks",
             "game_year": 2010,
             "associated_file": "04044b37-57a4-4668-94f4-842dc88404fd",
-            "status": "",
+            "status": "no_guess",
             "description": "WoT tank shots"
         },
         {
@@ -389,7 +389,7 @@ def populate_sounds_collection(collection):
             "game_name": "World of Warcraft",
             "game_year": 2004,
             "associated_file": "98622a5d-289a-4255-aeb3-e454d5c59e0a",
-            "status": "",
+            "status": "no_guess",
             "description": "WoW lust"
         },
         {
@@ -397,7 +397,7 @@ def populate_sounds_collection(collection):
             "game_name": "World of Warcraft",
             "game_year": 2004,
             "associated_file": "91fa5f31-39dc-4a8c-bb8d-f10228618861",
-            "status": "",
+            "status": "no_guess",
             "description": "WoW level up"
         },
         {
@@ -405,7 +405,7 @@ def populate_sounds_collection(collection):
             "game_name": "World of Warcraft",
             "game_year": 2004,
             "associated_file": "234ef9e9-0415-4614-9d4d-6f57e4ce3052",
-            "status": "",
+            "status": "no_guess",
             "description": "WoW Quest complete"
         },
         {
@@ -413,7 +413,7 @@ def populate_sounds_collection(collection):
             "game_name": "World of Warcraft",
             "game_year": 2004,
             "associated_file": "a2dc7acf-ce24-47a8-bc38-dee8f2791e12",
-            "status": "",
+            "status": "no_guess",
             "description": "WoW stealth"
         },
     ]
