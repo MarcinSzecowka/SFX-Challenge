@@ -28,6 +28,7 @@ logging.basicConfig(level=logging.DEBUG,
                     filename=os.path.join(os.path.abspath(os.curdir), f"logs\Debug{datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S')}.log"),
                     filemode="w")
 console = logging.StreamHandler()
+logging.getLogger('').addHandler(console)  # todo Remove line before deploying
 
 # App
 app = Flask(__name__)
@@ -107,8 +108,10 @@ def favicon():
 
 @app.errorhandler(404)
 def page_not_found(e):
+    print(f"Error handler: {e}")  # todo Remove this line before deploying
+    print(f"{request.script_root}/{request.path}")  # todo Remove this line before deploying
     return redirect(url_for("create_new_modern_challenge"), code=302)
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)  # todo Remove debug before deploying
