@@ -11,10 +11,10 @@ import logging
 import datetime
 
 # Databases
-db_sfxchallenge = connect_to_mongodb("SFXChallenge")
+db_sfxchallenge = connect_to_mongodb("SFXChall")
 db_challenges = connect_to_mongodb("Challenges")
 
-my_sfxchallenge_collection = get_collection(db_sfxchallenge, "test")
+# my_sfxchallenge_collection = get_collection(db_sfxchallenge, "test" # todo remove
 
 sounds_collection = get_collection(db_sfxchallenge, "Sounds")
 sounds_collection.drop()

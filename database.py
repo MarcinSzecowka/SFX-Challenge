@@ -1,10 +1,13 @@
+import os
+
 import pymongo
 
 
 def connect_to_mongodb(database):
-    username = "root"
-    password = "rootpassword"
-    client = pymongo.MongoClient("mongodb://localhost:27017/", username=username, password=password)
+    # username = "root"
+    # password = "rootpassword"
+    # client = pymongo.MongoClient("mongodb://localhost:27017/", username=username, password=password)
+    client = pymongo.MongoClient(f"{os.getenv('MONGODB_URI')}")
     database = client[f"{database}"]
     return database
 
