@@ -17,9 +17,9 @@ db_challenges = connect_to_mongodb("Challenges")
 # my_sfxchallenge_collection = get_collection(db_sfxchallenge, "test" # todo remove
 
 sounds_collection = get_collection(db_sfxchallenge, "Sounds")
-sounds_collection.drop()
+# sounds_collection.drop()
 # sounds_collection = get_collection(db_sfxchallenge, "Sounds")
-# populate_sounds_collection(sounds_collection) # 
+# populate_sounds_collection(sounds_collection) #
 
 # Logging
 logging.basicConfig(level=logging.DEBUG,
