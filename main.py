@@ -18,8 +18,8 @@ db_challenges = connect_to_mongodb("Challenges")
 
 sounds_collection = get_collection(db_sfxchallenge, "Sounds")
 sounds_collection.drop()
-sounds_collection = get_collection(db_sfxchallenge, "Sounds")
-populate_sounds_collection(sounds_collection)
+# sounds_collection = get_collection(db_sfxchallenge, "Sounds")
+# populate_sounds_collection(sounds_collection) # 
 
 # Logging
 logging.basicConfig(level=logging.DEBUG,
