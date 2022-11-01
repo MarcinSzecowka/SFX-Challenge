@@ -3,7 +3,7 @@ from database import connect_to_mongodb, create_challenge_collection, get_collec
 from Levenshtein import ratio
 from flask import jsonify
 from datetime import datetime, timedelta
-from wtforms import Form, IntegerField, HiddenField, validators
+from wtforms import Form, IntegerField, validators
 
 
 MINIMUM_RATIO = 0.8
@@ -12,7 +12,6 @@ MINIMUM_RATIO = 0.8
 class CreateChallengeForm(Form):
     question_amount = IntegerField("Question amount", [validators.DataRequired(), validators.NumberRange(min=10, max=52)])
     minimum_year = IntegerField("Minimum year", [validators.DataRequired(), validators.NumberRange(min=1998, max=2022)])
-    user_fingerprint = HiddenField(label=None)
 
 
 def collection_exists(uuid, db):
@@ -45,28 +44,11 @@ def add_deletion_date(uuid, db):
     insertion_id = deletion_dates_collection.insert_one({"uuid": uuid, "deletion_date": deletion_date})
 
 
-def add_challenge_owner(uuid, fingerprint, db):
-    challenge_owner_collection = get_collection(db, "Challenge owner")
-    # noinspection PyUnusedLocal
-    insertion_id = challenge_owner_collection.insert_one({"uuid": uuid, "owner": fingerprint})
-
-
 def extend_deletion_date(db, uuid):
     deletion_dates_collection = get_collection(db, "Deletion dates")
     new_deletion_date = datetime.now() + timedelta(days=2)
     # noinspection PyUnusedLocal
     update_id = deletion_dates_collection.update_one({"uuid": uuid}, {"$set": {"deletion_date": new_deletion_date}})
-
-
-def compare_fingerprint(user_fingerprint, uuid, db):
-    challenge_owner_collection = get_collection(db, "Challenge owner")
-    challenge_owner = challenge_owner_collection.find({"uuid": {"$eq": uuid}})[0]["owner"]
-    if not challenge_owner:  # find method returns [] if nothing is found. This shouldn't ever happen but the if statement is there just in case
-        return False
-    elif challenge_owner == user_fingerprint:
-        return True
-    else:
-        return False
 
 
 def get_audio_file_path(name_uuid, db):

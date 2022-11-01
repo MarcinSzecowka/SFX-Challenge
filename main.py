@@ -2,7 +2,7 @@ from flask import Flask, request, url_for, redirect, jsonify, render_template, s
 from database import connect_to_mongodb, get_collection
 from utils import create_new_challenge, compare_answer_to_game_name_by_id, get_challenge_content, \
     get_challenge_results_content, collection_exists, add_deletion_date, delete_outdated_challenges, \
-    extend_deletion_date, add_challenge_owner, compare_fingerprint, CreateChallengeForm, get_audio_file_path
+    extend_deletion_date, CreateChallengeForm, get_audio_file_path
 from sounds import populate_sounds_collection
 from error_messages import challenge_does_not_exist
 from pathlib import Path
@@ -13,8 +13,6 @@ import datetime
 # Databases
 db_sfxchallenge = connect_to_mongodb("SFXChallenge")
 db_challenges = connect_to_mongodb("Challenges")
-
-my_sfxchallenge_collection = get_collection(db_sfxchallenge, "test")
 
 sounds_collection = get_collection(db_sfxchallenge, "Sounds")
 sounds_collection.drop()
@@ -48,10 +46,8 @@ def create_new_modern_challenge(error_message=None):
     if request.method == "POST" and form.validate():
         amount = form.question_amount.data
         min_year = form.minimum_year.data
-        user_fingerprint = form.user_fingerprint.data
         new_uuid = create_new_challenge(sounds_collection, amount, min_year)
         add_deletion_date(new_uuid, db_sfxchallenge)
-        add_challenge_owner(new_uuid, user_fingerprint, db_sfxchallenge)
         return redirect(url_for('challenge', challenge_uuid=new_uuid), code=302)
 
 
@@ -67,11 +63,7 @@ def challenge(challenge_uuid):
     if request.method == "POST":
         sfx_id = str(request.form.get("sfx_id"))
         guess = str(request.form.get("guess"))
-        user_fingerprint = str(request.form.get("user_fingerprint"))
-        if compare_fingerprint(user_fingerprint, challenge_uuid, db_sfxchallenge):
-            return compare_answer_to_game_name_by_id(challenge_uuid, db_challenges, sfx_id, guess)
-        else:
-            return "redirect"
+        return compare_answer_to_game_name_by_id(challenge_uuid, db_challenges, sfx_id, guess)
 
 
 @app.route("/challenge/<string:challenge_uuid>/result", methods=["POST"])
