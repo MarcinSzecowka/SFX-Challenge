@@ -5,24 +5,6 @@
 {% endblock %}
 
 {% block scripts %}
-    <script>
-      var asd
-      // Virtual fingerprint
-      // Initialize the agent at application startup.
-      const fpPromise = import('https://fpcdn.io/v3/YEa0uAF9MDNGqdIS2zVk')
-        .then(FingerprintJS => FingerprintJS.load({
-          region: 'eu'
-        }))
-
-      // Get the visitor identifier when you need it.
-      fpPromise
-        .then(fp => fp.get())
-        .then(result => {
-          // This is the visitor identifier:
-          var visitorId = result.visitorId;
-          document.getElementById("user_fingerprint").value = visitorId;
-        })
-    </script>
 {% endblock %}
 
 {% block content %}
@@ -39,7 +21,6 @@
     <form>
         <div class="container">
             <div class="row">
-                <input type="hidden" name="user_fingerprint" id="user_fingerprint" value="">
                 {% for element in json_obj[1].sfxs_contents %}
                     <div class="col-4 col-xl-4 col-lg4 col-md-6 col-sm-6" style="margin-bottom: 80px;">
                         {{ loop.index }}: <input type="text" name="sfx_input" id="{{ element._id }}" onfocus="changeFocus()" oninput="getQuestionAnswerPrep()" value="{{ element.game_name }}" class="{{ 'uncompleted' if element.status == 'incorrect_guess' else 'completed' if element.status == 'correct_guess'}}">
@@ -69,19 +50,14 @@
         function getQuestionAnswer(){
             sfxId = currentFocus;
             userGuess = document.getElementById(currentFocus).value;
-            userFingerprint = document.getElementById("user_fingerprint").value
             if (userGuess != ""){
                 $.post( "/challenge/{{ json_obj[0].challenge_uuid }}", {
                     sfx_id: sfxId,
                     guess: userGuess,
-                    user_fingerprint: userFingerprint,
                     dataType: "json"
                 })
                 .done(function(response){
-                    if (response === "redirect"){
-                        window.location.replace("/create/modern?error_message=You+are+not+allowed+to+take+part+in+this+challenge+as+you+are+not+it%27s+owner.+You+may+see+this+message+even+if+you+are+the+owner%2C+which+means+that+your+browser%27s+settings+have+changed.+In+that+case+consider+creating+a+new+challenge+instead");
-                    }
-                    else if (response.game_name === "False"){
+                    if (response.game_name === "False"){
                         document.getElementById(response.sfx_id).classList.add('uncompleted');
                         document.getElementById(response.sfx_id).classList.remove('completed');
                     }
