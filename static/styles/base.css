@@ -73,15 +73,120 @@
     text-align: center;
 }
 
-label[for="user_fingerprint"] {
-    display: none;
-}
-
 .form_field {
-    width: 50%;
+    width: 15%;
+    margin-right: 35%;
 }
 
 #submit_button {
     display: block;
     margin: auto;
+    margin-top: 10px;
+}
+
+#form_div {
+    margin-top: 40px;
+}
+
+/* Tooltips */
+/* They have to have a letter at the end since bootstrap also has tooltip classes */
+.tooltipb {
+    position: relative;
+}
+
+.tooltipb .tooltiptextb {
+    visibility: hidden;
+    background-color: black;
+    color: #fff;
+    width: 320px;
+    margin-right: 20px;
+    text-align: center;
+    padding: 5px 20px 5px 20px;
+    border-radius: 6px;
+    position: absolute;
+    z-index: 10;
+}
+
+.tooltipb:hover .tooltiptextb {
+    visibility: visible;
+}
+
+.tooltipb .tooltiptextb {
+    top: -5px;
+    right: 105%;
+}
+
+.tooltipb .tooltiptextb {
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltipb:hover .tooltiptextb {
+    opacity: 1;
+}
+
+.tooltipb .tooltiptextb::after {
+    content: " ";
+    position: absolute;
+    top: 15px;
+    left: 100%; /* To the right of the tooltip */
+    margin-top: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent transparent black;
+}
+
+/* ----------------------- */
+
+.tooltipc {
+    position: relative;
+}
+
+.tooltipc .tooltiptextc {
+    visibility: hidden;
+    background-color: black;
+    color: #fff;
+    width: 320px;
+    margin-right: -12px;
+    text-align: center;
+    padding: 5px 20px 5px 20px;
+    border-radius: 6px;
+    position: absolute;
+    z-index: 10;
+}
+
+.tooltipc:hover .tooltiptextc {
+    visibility: visible;
+}
+
+.tooltipc .tooltiptextc {
+    top: -5px;
+    right: 105%;
+}
+
+.tooltipc .tooltiptextc {
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltipc:hover .tooltiptextc {
+    opacity: 1;
+}
+
+.tooltipc .tooltiptextc::after {
+    content: " ";
+    position: absolute;
+    top: 15px;
+    left: 100%; /* To the right of the tooltip */
+    margin-top: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent transparent black;
+}
+/* Tooltips end */
+
+#information-box {
+    margin-top: 100px;
+    text-align: center;
+    font-size: 1.5em;
 }

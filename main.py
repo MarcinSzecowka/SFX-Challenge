@@ -1,10 +1,10 @@
 from flask import Flask, request, url_for, redirect, jsonify, render_template, send_file, send_from_directory
 from database import connect_to_mongodb, get_collection
-from utils import create_new_challenge, compare_answer_to_game_name_by_id, get_challenge_content, \
+from utils import add_new_challenge, compare_answer_to_game_name_by_id, get_challenge_content, \
     get_challenge_results_content, collection_exists, add_deletion_date, delete_outdated_challenges, \
     extend_deletion_date, CreateChallengeForm, get_audio_file_path
 from sounds import populate_sounds_collection
-from error_messages import challenge_does_not_exist
+from error_messages import challenge_does_not_exist, form_validation_error
 from pathlib import Path
 import os
 import logging
@@ -34,22 +34,25 @@ app = Flask(__name__)
 
 @app.route("/")
 def return_homepage():
-    return redirect(url_for("create_new_modern_challenge"), code=302)
+    return redirect(url_for("create_new_challenge"), code=302)
 
 
-@app.route("/create/modern", methods=["GET", "POST"])
-def create_new_modern_challenge(error_message=None):
+@app.route("/create", methods=["GET", "POST"])
+def create_new_challenge(error_message=None):
     form = CreateChallengeForm(request.form)
     if request.method == "GET":
         if not error_message:
-            return render_template("create_new_challenge.html", form=form, error_message=error_message)
-        return render_template("create_new_challenge.html", form=form)
-    if request.method == "POST" and form.validate():
-        amount = form.question_amount.data
-        min_year = form.minimum_year.data
-        new_uuid = create_new_challenge(sounds_collection, amount, min_year)
-        add_deletion_date(new_uuid, db_sfxchallenge)
-        return redirect(url_for('challenge', challenge_uuid=new_uuid), code=302)
+            return render_template("create_new_challenge_template.html", form=form, error_message=error_message)
+        return render_template("create_new_challenge_template.html", form=form)
+    if request.method == "POST":
+        if form.validate():
+            amount = form.question_amount.data
+            min_year = form.minimum_year.data
+            new_uuid = add_new_challenge(sounds_collection, amount, min_year)
+            add_deletion_date(new_uuid, db_sfxchallenge)
+            return redirect(url_for('challenge', challenge_uuid=new_uuid), code=302)
+        else:
+            return redirect(url_for('create_new_challenge', error_message=form_validation_error), code=400)
 
 
 @app.route("/challenge/<string:challenge_uuid>", methods=["GET", "POST"])
@@ -58,9 +61,9 @@ def challenge(challenge_uuid):
         if collection_exists(challenge_uuid, db_challenges):
             challenge_content = get_challenge_content(challenge_uuid, db_challenges)
             extend_deletion_date(db_sfxchallenge, challenge_uuid)
-            return render_template("challenge.html", json_obj=challenge_content)
+            return render_template("challenge_template.html", json_obj=challenge_content)
         else:
-            return render_template("create_new_challenge.html", error_message=challenge_does_not_exist)
+            return redirect(url_for('create_new_challenge', error_message=challenge_does_not_exist), code=302)
     if request.method == "POST":
         sfx_id = str(request.form.get("sfx_id"))
         guess = str(request.form.get("guess"))
@@ -102,7 +105,13 @@ def favicon():
 def page_not_found(e):
     print(f"Error handler: {e}")  # todo Remove this line before deploying
     print(f"{request.script_root}/{request.path}")  # todo Remove this line before deploying
-    return redirect(url_for("create_new_modern_challenge"), code=302)
+    return redirect(url_for("create_new_challenge"), code=302)
+
+
+# todo When you press "see results" on challenge page, make sure the unguessed questions are marked as incorrectly
+#  guessed when visiting that challenge again(after refreshing the page)
+
+# todo When you play a sound on challenge page change the play button into a stop button that actually stops the sound
 
 
 if __name__ == '__main__':

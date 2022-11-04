@@ -10,7 +10,7 @@ MINIMUM_RATIO = 0.8
 
 
 class CreateChallengeForm(Form):
-    question_amount = IntegerField("Question amount", [validators.DataRequired(), validators.NumberRange(min=10, max=52)])
+    question_amount = IntegerField("SFX amount", [validators.DataRequired(), validators.NumberRange(min=10, max=30)])
     minimum_year = IntegerField("Minimum year", [validators.DataRequired(), validators.NumberRange(min=1998, max=2022)])
 
 
@@ -29,7 +29,7 @@ def select_random_sounds(db, amount, min_year):
     return sounds_list
 
 
-def create_new_challenge(db, amount, min_year):
+def add_new_challenge(db, amount, min_year):
     challenge_uuid = str(uuid4())
     sounds = select_random_sounds(db, amount, min_year)
     db_challenges = connect_to_mongodb("Challenges")
