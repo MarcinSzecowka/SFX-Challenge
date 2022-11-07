@@ -59,12 +59,16 @@
     text-align: center;
 }
 
-.completed {
+.correct_guess {
     background-color: green;
     pointer-events: none;
 }
 
-.uncompleted {
+.incorrect_guess {
+    background-color: orange;
+}
+
+.results_shown {
     background-color: red;
 }
 

@@ -12,7 +12,7 @@
 
 {% block content %}
     <div class="div-sticky">
-        <p id="score-counter">I am sticky</p>
+        <p id="score-counter"></p>
         <hr class="hr-gradient">
     </div>
 
@@ -26,7 +26,7 @@
             <div class="row">
                 {% for element in json_obj[1].sfxs_contents %}
                     <div class="col-4 col-xl-4 col-lg4 col-md-6 col-sm-6" style="margin-bottom: 80px;">
-                        {{ loop.index }}: <input type="text" name="sfx_input" id="{{ element._id }}" onfocus="changeFocus()" oninput="getQuestionAnswerPrep()" value="{{ element.game_name }}" class="{{ 'uncompleted' if element.status == 'incorrect_guess' else 'completed' if element.status == 'correct_guess'}}">
+                        {{ loop.index }}: <input type="text" name="sfx_input" id="{{ element._id }}" onfocus="changeFocus()" oninput="getQuestionAnswerPrep()" value="{{ element.game_name }}" class="{{ 'incorrect_guess' if element.status == 'incorrect_guess' else 'correct_guess' if element.status == 'correct_guess' else 'results_shown' if element.status == 'result_shown' }}">
                         <audio id="audio-{{ element._id }}" src="/audio/{{ element._id }}"></audio>
                         <button type="button" onclick="playAudio('audio-{{ element._id }}')">Play audio</button>
                     </div><br>
@@ -60,14 +60,17 @@
                     dataType: "json"
                 })
                 .done(function(response){
-                    if (response.game_name === "False"){
-                        document.getElementById(response.sfx_id).classList.add('uncompleted');
-                        document.getElementById(response.sfx_id).classList.remove('completed');
+                    if (response.game_name === "Cheater"){
+                        redirectToHomePage("Cheater")
+                    }
+                    else if (response.game_name === "False"){
+                        document.getElementById(response.sfx_id).classList.add('incorrect_guess');
+                        document.getElementById(response.sfx_id).classList.remove('correct_guess');
                     }
                     else {
                         document.getElementById(response.sfx_id).value = response.game_name;
-                        document.getElementById(response.sfx_id).classList.remove('uncompleted');
-                        document.getElementById(response.sfx_id).classList.add('completed');
+                        document.getElementById(response.sfx_id).classList.remove('incorrect_guess');
+                        document.getElementById(response.sfx_id).classList.add('correct_guess');
                         document.getElementById(response.sfx_id).blur();
                         adjustScore();
                     }
@@ -83,16 +86,30 @@
                 for (var j = 0; j < response[1].length; j++){
                     document.getElementById(response[1][j]._id).value = response[1][j].game_name;
                     if (response[1][j].status === "correct_guess"){
-                        document.getElementById(response[1][j]._id).classList.remove('uncompleted');
-                        document.getElementById(response[1][j]._id).classList.add('completed');
+                        document.getElementById(response[1][j]._id).classList.remove('incorrect_guess');
+                        document.getElementById(response[1][j]._id).classList.add('correct_guess');
                     }
                     else {
-                        document.getElementById(response[1][j]._id).classList.add('uncompleted');
-                        document.getElementById(response[1][j]._id).classList.remove('completed');
+                        document.getElementById(response[1][j]._id).classList.remove('incorrect_guess');
+                        document.getElementById(response[1][j]._id).classList.add('results_shown');
                     }
                     document.getElementById(response[1][j]._id).disabled = true;
                 }
             });
+        }
+
+        function disableElementsWhereResultsWereShown(){
+            for (element of {{ json_obj[1].sfxs_contents | safe }}){
+                if (element.status === "result_shown"){
+                    document.getElementById(element._id).disabled = true;
+                }
+            }
+        }
+
+        function redirectToHomePage(reason){
+            if (reason === "Cheater"){
+                window.location.replace('/create?error_message=Stop+trying+to+cheat.');
+            }
         }
 
         function playAudio(id){
@@ -109,7 +126,7 @@
         }
 
         function adjustScore(){
-            var currentScore = document.getElementsByClassName("completed").length;
+            var currentScore = document.getElementsByClassName("correct_guess").length;
             var maxScore = document.querySelectorAll("input[type=text]").length;
             document.getElementById("score-counter").innerHTML = "Your score is: " + currentScore + " / " + maxScore;
 
@@ -121,6 +138,8 @@
         // Change default volume of audio tags after the page loads so that the user doesn't get
         // hearing damage if they don't adjust their volume first
         changeVolume()
+
+        disableElementsWhereResultsWereShown()
 
     </script>
 {% endblock %}

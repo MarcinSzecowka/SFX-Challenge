@@ -108,9 +108,6 @@ def page_not_found(e):
     return redirect(url_for("create_new_challenge"), code=302)
 
 
-# todo When you press "see results" on challenge page, make sure the unguessed questions are marked as incorrectly
-#  guessed when visiting that challenge again(after refreshing the page)
-
 # todo When you play a sound on challenge page change the play button into a stop button that actually stops the sound
 
 
