@@ -26,7 +26,7 @@
             <div class="row">
                 {% for element in json_obj[1].sfxs_contents %}
                     <div class="col-4 col-xl-4 col-lg4 col-md-6 col-sm-6" style="margin-bottom: 80px;">
-                        {{ loop.index }}: <input type="text" name="sfx_input" id="{{ element._id }}" onfocus="changeFocus()" oninput="getQuestionAnswerPrep()" value="{{ element.game_name }}" class="{{ 'incorrect_guess' if element.status == 'incorrect_guess' else 'correct_guess' if element.status == 'correct_guess' else 'results_shown' if element.status == 'result_shown' }}">
+                        {{ loop.index }}: <input type="text" name="sfx_input" id="{{ element._id }}" oninput="getQuestionAnswerPrep('{{ element._id }}')" value="{{ element.game_name }}" class="{{ 'incorrect_guess' if element.status == 'incorrect_guess' else 'correct_guess' if element.status == 'correct_guess' else 'results_shown' if element.status == 'result_shown' }}">
                         <audio id="audio-{{ element._id }}" src="/audio/{{ element._id }}"></audio>
                         <button type="button" onclick="playAudio('audio-{{ element._id }}')">Play audio</button>
                     </div><br>
@@ -38,21 +38,15 @@
 
     <script>
         let timer = null
-        var currentFocus = null;
 
-        function changeFocus(){
+        function getQuestionAnswerPrep(element_id){
             clearTimeout(timer);
-            currentFocus = document.activeElement.id;
+            timer = setTimeout(function() { getQuestionAnswer(element_id); }, 400);
         }
 
-        function getQuestionAnswerPrep(){
-            clearTimeout(timer);
-            timer = setTimeout(getQuestionAnswer, 400);
-        }
-
-        function getQuestionAnswer(){
-            sfxId = currentFocus;
-            userGuess = document.getElementById(currentFocus).value;
+        function getQuestionAnswer(element_id){
+            sfxId = element_id;
+            userGuess = document.getElementById(element_id).value;
             if (userGuess != ""){
                 $.post( "/challenge/{{ json_obj[0].challenge_uuid }}", {
                     sfx_id: sfxId,
