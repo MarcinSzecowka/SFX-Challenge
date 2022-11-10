@@ -92,6 +92,20 @@
     margin-top: 40px;
 }
 
+/* Play/Stop buttons */
+
+.playbutton {
+    display: none;
+}
+
+.stopbutton {
+    display: none;
+}
+
+.show {
+    display: inline;
+}
+
 /* Tooltips */
 /* They have to have a letter at the end since bootstrap also has tooltip classes */
 .tooltipb {

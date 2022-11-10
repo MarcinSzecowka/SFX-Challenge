@@ -27,8 +27,9 @@
                 {% for element in json_obj[1].sfxs_contents %}
                     <div class="col-4 col-xl-4 col-lg4 col-md-6 col-sm-6" style="margin-bottom: 80px;">
                         {{ loop.index }}: <input type="text" name="sfx_input" id="{{ element._id }}" oninput="getQuestionAnswerPrep('{{ element._id }}')" value="{{ element.game_name }}" class="{{ 'incorrect_guess' if element.status == 'incorrect_guess' else 'correct_guess' if element.status == 'correct_guess' else 'results_shown' if element.status == 'result_shown' }}">
-                        <audio id="audio-{{ element._id }}" src="/audio/{{ element._id }}"></audio>
-                        <button type="button" onclick="playAudio('audio-{{ element._id }}')">Play audio</button>
+                        <audio id="audio-{{ element._id }}" src="/audio/{{ element._id }}" onended="resetStopPlayButtons('{{ element._id }}')"></audio>
+                        <button id="playbutton-{{ element._id }}" class="playbutton show" type="button" onclick="playAudio('audio-{{ element._id }}'); hidePlaybutton('playbutton-{{ element._id }}'); showStopbutton('stopbutton-{{ element._id }}');">Play audio</button>
+                        <button id="stopbutton-{{ element._id }}" class="stopbutton" type="button" onclick="stopAllAudio(); hideStopbutton('stopbutton-{{ element._id }}'); showPlaybutton('playbutton-{{ element._id }}');">Stop audio</button>
                     </div><br>
                 {% endfor %}
             </div>
@@ -37,6 +38,9 @@
     </form>
 
     <script>
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Endpoint related functions ----------------------------------------------------------------------------------
+
         let timer = null
 
         function getQuestionAnswerPrep(element_id){
@@ -106,9 +110,55 @@
             }
         }
 
+
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Play/Stop button functions ----------------------------------------------------------------------------------
+
+        function hideAllStopButtons() {
+            document.querySelectorAll('.stopbutton').forEach(el => el.classList.remove('show'));
+        }
+
+        function showAllPlayButtons() {
+            document.querySelectorAll('.playbutton').forEach(el => el.classList.add('show'));
+        }
+
+        function stopAllAudio(){
+            hideAllStopButtons();
+            showAllPlayButtons();
+            document.querySelectorAll('audio').forEach(el => {el.pause(); el.currentTime = 0;});
+        }
+
         function playAudio(id){
+            stopAllAudio()
             document.getElementById(id).play();
         }
+
+        function resetStopPlayButtons(id) {
+            document.getElementById(`stopbutton-${id}`).classList.remove("show")
+            document.getElementById(`playbutton-${id}`).classList.add("show")
+        }
+
+        function showStopbutton(buttonId){
+            document.getElementById(buttonId).classList.add("show")
+        }
+
+        function showPlaybutton(buttonId){
+            document.getElementById(buttonId).classList.add("show")
+        }
+
+        function hideStopbutton(buttonId){
+            document.getElementById(buttonId).classList.remove("show")
+        }
+
+        function hidePlaybutton(buttonId){
+            document.getElementById(buttonId).classList.remove("show")
+        }
+
+
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // General page frontend functions
 
         function changeVolume(){
             var allAudioTags = document.getElementsByTagName("audio");
@@ -125,6 +175,11 @@
             document.getElementById("score-counter").innerHTML = "Your score is: " + currentScore + " / " + maxScore;
 
         }
+
+
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Function execution
 
         // Adjust the score
         adjustScore()
