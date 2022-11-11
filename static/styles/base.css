@@ -60,16 +60,20 @@
 }
 
 .correct_guess {
-    background-color: green;
+    //background-color: green;
+    background-color: #539453;
     pointer-events: none;
 }
 
 .incorrect_guess {
-    background-color: orange;
+    background-color: #ff9d5c;
 }
 
 .results_shown {
-    background-color: red;
+    background-color: #f94449;
+    pointer-events: none;
+    color: #d3d3d3;
+    text-shadow: 1px 1px #2a2a2a;
 }
 
 .alert {
@@ -92,14 +96,55 @@
     margin-top: 40px;
 }
 
-/* Play/Stop buttons */
-
-.playbutton {
-    display: none;
+.index-loop {
+    font-weight: 500;
+    text-align: right;
+    text-shadow: 1px 1px #000000;
+    position: absolute;
+    left: 13px;
+    top: 4px;
+    width: 25px;
+    margin-right: 0px;
 }
 
-.stopbutton {
+.challenge-input {
+    border: 0;
+    padding-left: 7px;
+    padding-right: 5px;
+    padding-bottom: 3px;
+    height: 35px;
+    width: 220px;
+    border-radius: 2px;
+    font-size: 105%;
+    box-sizing: border-box;
+}
+
+.segment-div {
+    margin-bottom: 60px;
+    padding-left: 45px;
+    padding-right: 0px;
+}
+
+.results-button {
+    height: 35px;
+    border: 0;
+    border-radius: 2px;
+}
+
+.score-counter-div {
+    font-weight: 500;
+    font-size: 1.2rem;
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+/* Play/Stop buttons */
+
+.playbutton, .stopbutton{
     display: none;
+    height: 35px;
+    border: 0;
+    border-radius: 2px;
 }
 
 .show {

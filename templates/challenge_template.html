@@ -12,7 +12,7 @@
 
 {% block content %}
     <div class="div-sticky">
-        <p id="score-counter"></p>
+        <p class="score-counter-div" id="score-counter"></p>
         <hr class="hr-gradient">
     </div>
 
@@ -25,15 +25,16 @@
         <div class="container">
             <div class="row">
                 {% for element in json_obj[1].sfxs_contents %}
-                    <div class="col-4 col-xl-4 col-lg4 col-md-6 col-sm-6" style="margin-bottom: 80px;">
-                        {{ loop.index }}: <input type="text" name="sfx_input" id="{{ element._id }}" oninput="getQuestionAnswerPrep('{{ element._id }}')" value="{{ element.game_name }}" class="{{ 'incorrect_guess' if element.status == 'incorrect_guess' else 'correct_guess' if element.status == 'correct_guess' else 'results_shown' if element.status == 'result_shown' }}">
+                    <div class="segment-div col-12 col-xl-4 col-lg4 col-md-6 col-sm-12">
+                        <div class="index-loop">{{ loop.index }}</div>
+                        <input type="text" name="sfx_input" id="{{ element._id }}" oninput="getQuestionAnswerPrep('{{ element._id }}')" value="{{ element.game_name }}" class="challenge-input {{ 'incorrect_guess' if element.status == 'incorrect_guess' else 'correct_guess' if element.status == 'correct_guess' else 'results_shown' if element.status == 'result_shown' }}">
                         <audio id="audio-{{ element._id }}" src="/audio/{{ element._id }}" onended="resetStopPlayButtons('{{ element._id }}')"></audio>
                         <button id="playbutton-{{ element._id }}" class="playbutton show" type="button" onclick="playAudio('audio-{{ element._id }}'); hidePlaybutton('playbutton-{{ element._id }}'); showStopbutton('stopbutton-{{ element._id }}');">Play audio</button>
                         <button id="stopbutton-{{ element._id }}" class="stopbutton" type="button" onclick="stopAllAudio(); hideStopbutton('stopbutton-{{ element._id }}'); showPlaybutton('playbutton-{{ element._id }}');">Stop audio</button>
                     </div><br>
                 {% endfor %}
             </div>
-            <button class="button-centered" type="button" onclick="getResults()">See results</button>
+            <button class="results-button button-centered" type="button" onclick="getResults()">See results</button>
         </div>
     </form>
 
@@ -192,11 +193,3 @@
 
     </script>
 {% endblock %}
-
-<!--
-https://stackoverflow.com/questions/17365289/how-to-send-audio-wav-file-generated-at-the-server-to-client-browser
-https://stackoverflow.com/questions/17359741/playing-a-wavefile-from-the-html-using-flask-framework/67388580#67388580
-
-
-style="{{ 'background-color:red;' if element.status == 'incorrect_guess' else 'background-color:green; pointer-events:none;' if element.status == 'correct_guess'}}"
--->

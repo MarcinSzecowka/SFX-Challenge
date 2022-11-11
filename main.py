@@ -108,8 +108,5 @@ def page_not_found(e):
     return redirect(url_for("create_new_challenge"), code=302)
 
 
-# todo When you play a sound on challenge page change the play button into a stop button that actually stops the sound
-
-
 if __name__ == '__main__':
     app.run(debug=True)  # todo Remove debug before deploying
