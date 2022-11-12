@@ -13,13 +13,14 @@
 {% block content %}
     <div class="div-sticky">
         <p class="score-counter-div" id="score-counter"></p>
-        <hr class="hr-gradient">
+        <hr class="hr-gradient2">
     </div>
 
     <p class="p-centered" style="margin-top: 25px;">Adjust the volume to minimum before playing any audio</p>
-    <div class="div-centered" style="margin-bottom: 25px;">
-        <input type="range" id="volumeControl" name="volume" value="10" min="1" max="100" onchange="changeVolume()">
+    <div class="volume-wrapper" style="margin-bottom: 25px;">
+        <p class="minus-para">-</p><input type="range" class="volume-control" id="volumeControl" name="volume" value="10" min="1" max="100" step="1" onchange="changeVolume()"><p class="plus-para">+</p>
     </div>
+    <hr class="hr-gradient3">
     <br>
     <form>
         <div class="container">
@@ -34,7 +35,7 @@
                     </div><br>
                 {% endfor %}
             </div>
-            <button class="results-button button-centered" type="button" onclick="getResults()">See results</button>
+            <button class="results-button button-centered" id="results-button" type="button" onclick="getResults()">See results</button>
         </div>
     </form>
 
@@ -93,15 +94,21 @@
                         document.getElementById(response[1][j]._id).classList.add('results_shown');
                     }
                     document.getElementById(response[1][j]._id).disabled = true;
+                    document.getElementById("results-button").disabled = true;
                 }
             });
         }
 
         function disableElementsWhereResultsWereShown(){
+            var wereTheResultsShown = false
             for (element of {{ json_obj[1].sfxs_contents | safe }}){
                 if (element.status === "result_shown"){
                     document.getElementById(element._id).disabled = true;
+                    wereTheResultsShown = true
                 }
+            }
+            if (wereTheResultsShown === true){
+                document.getElementById("results-button").disabled = true;
             }
         }
 
