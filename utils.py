@@ -10,7 +10,7 @@ MINIMUM_RATIO = 0.8
 
 
 class CreateChallengeForm(Form):
-    question_amount = IntegerField("Question amount", [validators.DataRequired(), validators.NumberRange(min=10, max=52)])
+    question_amount = IntegerField("SFX amount", [validators.DataRequired(), validators.NumberRange(min=10, max=30)])
     minimum_year = IntegerField("Minimum year", [validators.DataRequired(), validators.NumberRange(min=1998, max=2022)])
 
 
@@ -29,7 +29,7 @@ def select_random_sounds(db, amount, min_year):
     return sounds_list
 
 
-def create_new_challenge(db, amount, min_year):
+def add_new_challenge(db, amount, min_year):
     challenge_uuid = str(uuid4())
     sounds = select_random_sounds(db, amount, min_year)
     db_challenges = connect_to_mongodb("Challenges")
@@ -59,6 +59,9 @@ def get_audio_file_path(name_uuid, db):
 
 def compare_answer_to_game_name_by_id(challenge_uuid, db, sfx_id, guess):
     challenge_collection = get_collection(db, challenge_uuid)
+    sfx_status = challenge_collection.find({"_id": {"$eq": sfx_id}})[0]["status"]
+    if sfx_status == "result_shown":
+        return jsonify({"game_name": "Cheater"})
     game_name = challenge_collection.find({"_id": {"$eq": sfx_id}})[0]["game_name"]
     if ratio(game_name.lower(), guess.lower()) >= MINIMUM_RATIO:
         challenge_collection.update_one({"_id": sfx_id}, {"$set": {"status": "correct_guess"}}, upsert=False)
@@ -72,7 +75,7 @@ def get_challenge_content(challenge_uuid, db):
     challenge_collection = get_collection(db, challenge_uuid)
     challenge_content = [{"challenge_uuid": challenge_uuid}]
     sfxs_contents = []
-    for sfx in challenge_collection.aggregate([{"$project": {"status": 1, "game_name": {"$cond": {"if": {"$eq": ["$status", "correct_guess"]}, "then": "$game_name", "else": ""}}}}]):  # ,"else": "$$REMOVE" could also be used, but leaving it in and making it empty makes it easier to handle by the frontend (I would have to make an if statement in jinja which is arguably more complicated to implement)
+    for sfx in challenge_collection.aggregate([{"$project": {"status": 1, "game_name": {"$switch": {"branches": [{"case": {"$eq": ["$status", "correct_guess"]}, "then": "$game_name"}, {"case": {"$eq": ["$status", "incorrect_guess"]}, "then": ""}, {"case": {"$eq": ["$status", "result_shown"]}, "then": "$game_name"}], "default": ""}}}}]):
         sfxs_contents.append(sfx)
     challenge_content.append({"sfxs_contents": sfxs_contents})
     return challenge_content
@@ -83,6 +86,8 @@ def get_challenge_results_content(challenge_uuid, db):
     challenge_results_content = [{"challenge_uuid": challenge_uuid}]
     sfxs_contents = []
     for sfx in challenge_collection.find({}, {"id": 1, "game_name": 1, "status": 1}):
+        if sfx["status"] in ["no_guess", "incorrect_guess"]:
+            challenge_collection.update_one({"_id": sfx["_id"]}, {"$set": {"status": "result_shown"}})
         sfxs_contents.append(sfx)
     challenge_results_content.append(sfxs_contents)
     return challenge_results_content

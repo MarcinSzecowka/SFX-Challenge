@@ -1,0 +1,202 @@
+{% extends "base_template.html" %}
+
+{% block scripts %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/base.css') }}">
+{% endblock %}
+
+{% block content %}
+    <div class="div-sticky">
+        <p class="score-counter-div" id="score-counter"></p>
+        <hr class="hr-gradient2">
+    </div>
+
+    <p class="p-centered" style="margin-top: 25px;">Adjust the volume to minimum before playing any audio</p>
+    <div class="volume-wrapper" style="margin-bottom: 25px;">
+        <p class="minus-para">-</p><input type="range" class="volume-control" id="volumeControl" name="volume" value="10" min="1" max="100" step="1" onchange="changeVolume()"><p class="plus-para">+</p>
+    </div>
+    <hr class="hr-gradient3">
+    <br>
+    <form>
+        <div class="container">
+            <div class="row">
+                {% for element in json_obj[1].sfxs_contents %}
+                    <div class="segment-div col-12 col-xl-4 col-lg4 col-md-6 col-sm-12">
+                        <div class="index-loop">{{ loop.index }}</div>
+                        <input type="text" name="sfx_input" id="{{ element._id }}" oninput="getQuestionAnswerPrep('{{ element._id }}')" value="{{ element.game_name }}" class="challenge-input {{ 'incorrect_guess' if element.status == 'incorrect_guess' else 'correct_guess' if element.status == 'correct_guess' else 'results_shown' if element.status == 'result_shown' }}">
+                        <audio id="audio-{{ element._id }}" src="/audio/{{ element._id }}" onended="resetStopPlayButtons('{{ element._id }}')"></audio>
+                        <button id="playbutton-{{ element._id }}" class="playbutton show" type="button" onclick="playAudio('audio-{{ element._id }}'); hidePlaybutton('playbutton-{{ element._id }}'); showStopbutton('stopbutton-{{ element._id }}');">Play audio</button>
+                        <button id="stopbutton-{{ element._id }}" class="stopbutton" type="button" onclick="stopAllAudio(); hideStopbutton('stopbutton-{{ element._id }}'); showPlaybutton('playbutton-{{ element._id }}');">Stop audio</button>
+                    </div><br>
+                {% endfor %}
+            </div>
+            <button class="results-button button-centered" id="results-button" type="button" onclick="getResults()">See results</button>
+        </div>
+    </form>
+
+    <script>
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Endpoint related functions ----------------------------------------------------------------------------------
+
+        let timer = null
+
+        function getQuestionAnswerPrep(element_id){
+            clearTimeout(timer);
+            timer = setTimeout(function() { getQuestionAnswer(element_id); }, 400);
+        }
+
+        function getQuestionAnswer(element_id){
+            sfxId = element_id;
+            userGuess = document.getElementById(element_id).value;
+            if (userGuess != ""){
+                $.post( "/challenge/{{ json_obj[0].challenge_uuid }}", {
+                    sfx_id: sfxId,
+                    guess: userGuess,
+                    dataType: "json"
+                })
+                .done(function(response){
+                    if (response.game_name === "Cheater"){
+                        redirectToHomePage("Cheater")
+                    }
+                    else if (response.game_name === "False"){
+                        document.getElementById(response.sfx_id).classList.add('incorrect_guess');
+                        document.getElementById(response.sfx_id).classList.remove('correct_guess');
+                    }
+                    else {
+                        document.getElementById(response.sfx_id).value = response.game_name;
+                        document.getElementById(response.sfx_id).classList.remove('incorrect_guess');
+                        document.getElementById(response.sfx_id).classList.add('correct_guess');
+                        document.getElementById(response.sfx_id).blur();
+                        adjustScore();
+                    }
+                });
+            }
+        }
+
+        function getResults(){
+            $.post( "/challenge/{{ json_obj[0].challenge_uuid }}/result", {
+                dataType: "json"
+            })
+            .done(function(response){
+                for (var j = 0; j < response[1].length; j++){
+                    document.getElementById(response[1][j]._id).value = response[1][j].game_name;
+                    if (response[1][j].status === "correct_guess"){
+                        document.getElementById(response[1][j]._id).classList.remove('incorrect_guess');
+                        document.getElementById(response[1][j]._id).classList.add('correct_guess');
+                    }
+                    else {
+                        document.getElementById(response[1][j]._id).classList.remove('incorrect_guess');
+                        document.getElementById(response[1][j]._id).classList.add('results_shown');
+                    }
+                    document.getElementById(response[1][j]._id).disabled = true;
+                    document.getElementById("results-button").disabled = true;
+                }
+            });
+        }
+
+        function disableElementsWhereResultsWereShown(){
+            var wereTheResultsShown = false
+            for (element of {{ json_obj[1].sfxs_contents | safe }}){
+                if (element.status === "result_shown"){
+                    document.getElementById(element._id).disabled = true;
+                    wereTheResultsShown = true
+                }
+            }
+            if (wereTheResultsShown === true){
+                document.getElementById("results-button").disabled = true;
+            }
+        }
+
+        function redirectToHomePage(reason){
+            if (reason === "Cheater"){
+                window.location.replace('/create?error_message=Stop+trying+to+cheat.');
+            }
+        }
+
+
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Play/Stop button functions ----------------------------------------------------------------------------------
+
+        function hideAllStopButtons() {
+            document.querySelectorAll('.stopbutton').forEach(el => el.classList.remove('show'));
+        }
+
+        function showAllPlayButtons() {
+            document.querySelectorAll('.playbutton').forEach(el => el.classList.add('show'));
+        }
+
+        function stopAllAudio(){
+            hideAllStopButtons();
+            showAllPlayButtons();
+            document.querySelectorAll('audio').forEach(el => {el.pause(); el.currentTime = 0;});
+        }
+
+        function playAudio(id){
+            stopAllAudio()
+            document.getElementById(id).play();
+        }
+
+        function resetStopPlayButtons(id) {
+            document.getElementById(`stopbutton-${id}`).classList.remove("show")
+            document.getElementById(`playbutton-${id}`).classList.add("show")
+        }
+
+        function showStopbutton(buttonId){
+            document.getElementById(buttonId).classList.add("show")
+        }
+
+        function showPlaybutton(buttonId){
+            document.getElementById(buttonId).classList.add("show")
+        }
+
+        function hideStopbutton(buttonId){
+            document.getElementById(buttonId).classList.remove("show")
+        }
+
+        function hidePlaybutton(buttonId){
+            document.getElementById(buttonId).classList.remove("show")
+        }
+
+
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // General page frontend functions
+
+        function changeVolume(){
+            var allAudioTags = document.getElementsByTagName("audio");
+            var globalVolume = document.getElementById("volumeControl").value/100;
+
+            for (var i = 0, max = allAudioTags.length; i < max; i++){
+                allAudioTags[i].volume = globalVolume;
+            }
+        }
+
+        function adjustScore(){
+            var currentScore = document.getElementsByClassName("correct_guess").length;
+            var maxScore = document.querySelectorAll("input[type=text]").length;
+            document.getElementById("score-counter").innerHTML = "Your score is: " + currentScore + " / " + maxScore;
+
+        }
+
+
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Function execution
+
+        // Adjust the score
+        adjustScore()
+
+        // Change default volume of audio tags after the page loads so that the user doesn't get
+        // hearing damage if they don't adjust their volume first
+        changeVolume()
+
+        disableElementsWhereResultsWereShown()
+
+    </script>
+{% endblock %}
