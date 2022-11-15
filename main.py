@@ -1,23 +1,20 @@
 from flask import Flask, request, url_for, redirect, jsonify, render_template, send_file, send_from_directory
-from database import connect_to_mongodb, get_collection
+from database import connect_to_mongodb, get_collection, update_sounds_collection
 from utils import add_new_challenge, compare_answer_to_game_name_by_id, get_challenge_content, \
     get_challenge_results_content, collection_exists, add_deletion_date, delete_outdated_challenges, \
     extend_deletion_date, CreateChallengeForm, get_audio_file_path
-from sounds import populate_sounds_collection
 from error_messages import challenge_does_not_exist, form_validation_error
 from pathlib import Path
 import os
 import logging
 import datetime
 
-# Databases
+# Databases, collections
 db_sfxchallenge = connect_to_mongodb("SFXChallenge")
 db_challenges = connect_to_mongodb("Challenges")
 
 sounds_collection = get_collection(db_sfxchallenge, "Sounds")
-sounds_collection.drop()
-sounds_collection = get_collection(db_sfxchallenge, "Sounds")
-populate_sounds_collection(sounds_collection)
+
 
 # Logging
 logging.basicConfig(level=logging.DEBUG,
@@ -28,6 +25,7 @@ logging.basicConfig(level=logging.DEBUG,
 console = logging.StreamHandler()
 logging.getLogger('').addHandler(console)  # todo Remove line before deploying
 
+
 # App
 app = Flask(__name__)
 
@@ -37,7 +35,7 @@ def return_homepage():
     return redirect(url_for("create_new_challenge"), code=302)
 
 
-@app.route("/create", methods=["GET", "POST"])
+@app.route("/creation", methods=["GET", "POST"])
 def create_new_challenge(error_message=None):
     form = CreateChallengeForm(request.form)
     if request.method == "GET":
@@ -88,10 +86,20 @@ def return_audio_file(audio_file_name):
         as_attachment=False,)
 
 
-@app.route("/deletion/<string:deletion_uuid>", methods=["DELETE"])
-def delete_challenges(deletion_uuid):
-    if deletion_uuid == os.getenv("DELETION_KEY"):
+@app.route("/deletion/<string:deletion_key_uuid>", methods=["DELETE"])
+def delete_challenges(deletion_key_uuid):
+    if deletion_key_uuid == os.getenv("DELETION_KEY"):
         return delete_outdated_challenges(db_challenges, db_sfxchallenge)
+    else:
+        return '', 401
+
+
+@app.route("/database/update/<string:update_key_uuid>", methods=["PUT"])
+def update_database(update_key_uuid):
+    if update_key_uuid == os.getenv("DATABASE_UPDATE_KEY"):
+        sounds_data_json = request.get_json()
+        update_sounds_collection(sounds_collection, sounds_data_json)
+        return '', 204
     else:
         return '', 401
 
