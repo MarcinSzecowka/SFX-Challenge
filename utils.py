@@ -95,10 +95,8 @@ def get_challenge_results_content(challenge_uuid, db):
 
 def delete_outdated_challenges(db_challenges, db_sfxchallenge):
     deletion_dates_collection = get_collection(db_sfxchallenge, "Deletion dates")
-    challenge_owner_collection = get_collection(db_sfxchallenge, "Challenge owner")
     for date in deletion_dates_collection.find({}, {"deletion_date": 1, "_id": 0, "uuid": 1}):
         if datetime.now() > date["deletion_date"]:
             db_challenges.drop_collection(date["uuid"])
             deletion_dates_collection.delete_one({"uuid": date["uuid"]})
-            challenge_owner_collection.delete_one({"uuid": date["uuid"]})
     return '', 200
