@@ -3,7 +3,7 @@ from database import connect_to_mongodb, get_collection, update_sounds_collectio
 from utils import add_new_challenge, compare_answer_to_game_name_by_id, get_challenge_content, \
     get_challenge_results_content, collection_exists, add_deletion_date, delete_outdated_challenges, \
     extend_deletion_date, CreateChallengeForm, get_audio_file_path
-from error_messages import challenge_does_not_exist, form_validation_error
+from error_messages import challenge_does_not_exist
 from pathlib import Path
 import os
 import logging
@@ -46,11 +46,12 @@ def create_new_challenge(error_message=None):
         if form.validate():
             amount = form.question_amount.data
             min_year = form.minimum_year.data
-            new_uuid = add_new_challenge(sounds_collection, amount, min_year)
-            add_deletion_date(new_uuid, db_sfxchallenge)
-            return redirect(url_for('challenge', challenge_uuid=new_uuid), code=302)
         else:
-            return redirect(url_for('create_new_challenge', error_message=form_validation_error), code=400)
+            amount = 30
+            min_year = 1998
+        new_uuid = add_new_challenge(sounds_collection, amount, min_year)
+        add_deletion_date(new_uuid, db_sfxchallenge)
+        return redirect(url_for('challenge', challenge_uuid=new_uuid), code=302)
 
 
 @app.route("/challenge/<string:challenge_uuid>", methods=["GET", "POST"])
