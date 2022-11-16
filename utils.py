@@ -4,9 +4,10 @@ from Levenshtein import ratio
 from flask import jsonify
 from datetime import datetime, timedelta
 from wtforms import Form, IntegerField, validators
+from re import sub
 
 
-MINIMUM_RATIO = 0.8
+MINIMUM_RATIO = 0.9
 
 
 class CreateChallengeForm(Form):
@@ -63,7 +64,9 @@ def compare_answer_to_game_name_by_id(challenge_uuid, db, sfx_id, guess):
     if sfx_status == "result_shown":
         return jsonify({"game_name": "Cheater"})
     game_name = challenge_collection.find({"_id": {"$eq": sfx_id}})[0]["game_name"]
-    if ratio(game_name.lower(), guess.lower()) >= MINIMUM_RATIO:
+    # sub('[^a-z0-9]+', '', game_name.lower())
+    # sub('[^a-z0-9]+', '', guess.lower())
+    if ratio(sub('[^a-z0-9]+', '', game_name.lower()), sub('[^a-z0-9]+', '', guess.lower())) >= MINIMUM_RATIO:
         challenge_collection.update_one({"_id": sfx_id}, {"$set": {"status": "correct_guess"}}, upsert=False)
         return jsonify({"sfx_id": sfx_id, "game_name": game_name, "status": "correct_guess"})
     else:
